@@ -7,3 +7,6 @@
 /dist
 /bin
 /.vs/together-api
+/project-apparatus/private
+/src/config/prod.config.json
+/src/config/dev.config.json
