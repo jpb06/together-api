@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "together-api", "together-api.njsproj", "{D9DE5BFD-744F-41A9-83EF-CB3F63FA0703}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9DE5BFD-744F-41A9-83EF-CB3F63FA0703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9DE5BFD-744F-41A9-83EF-CB3F63FA0703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9DE5BFD-744F-41A9-83EF-CB3F63FA0703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9DE5BFD-744F-41A9-83EF-CB3F63FA0703}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B7AFFF67-DAB4-4FC8-9A69-B3EE9AE5252C}
+	EndGlobalSection
+EndGlobal
