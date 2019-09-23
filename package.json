@@ -1,0 +1,39 @@
+{
+  "name": "together-api",
+  "version": "0.0.0",
+  "description": "together-api",
+  "main": "dist/js/togetherapi.js",
+  "author": {
+    "name": "jpb06"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/cors": "^2.8.6",
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.1",
+    "@types/jsonwebtoken": "^8.3.4",
+    "@types/mongodb": "^3.3.2",
+    "@types/node": "^8.0.14",
+    "archiver": "^3.1.1",
+    "fs-extra": "^8.1.0",
+    "gulp": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-ssh": "^0.7.0",
+    "gulp-typescript": "^5.0.1",
+    "typescript": "^3.6.3"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.3.2",
+    "rsa-vault": "0.0.9",
+    "saslprep": "^1.0.3"
+  }
+}
