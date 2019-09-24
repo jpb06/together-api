@@ -16,20 +16,20 @@ export function mapSecurityRoutes(app: Express) {
                 return res.answer(400, 'Expecting identifiers');
             }
 
-            let user = await UsersStore.get(req.body.login);
+            const user = await UsersStore.get(req.body.login);
             if (user === undefined) return res.status(401).json({
                 status: 401,
                 data: null
             });
 
-            let isPasswordValid = await CryptoUtil.verify(req.body.password, user.password)
+            const isPasswordValid = await CryptoUtil.verify(req.body.password, user.password)
             if (isPasswordValid) {
-                let applicationKeys: Types.ApplicationKeys = await VaultService.GetKeyPair('together');
+                const applicationKeys: Types.ApplicationKeys = await VaultService.GetKeyPair('together');
 
-                let gracePeriod = req.body.expiresIn || 120;
-                let expirationDate = moment().add(gracePeriod, 'seconds');
+                const gracePeriod = 20;
+                const expirationDate = moment().add(gracePeriod, 'minutes');
 
-                const jwtBearerToken = jwt.sign({ guild: req.body.login }, applicationKeys.privateKey, {
+                const jwtBearerToken = jwt.sign({ email: req.body.login }, applicationKeys.privateKey, {
                     algorithm: 'RS256',
                     expiresIn: gracePeriod
                 });

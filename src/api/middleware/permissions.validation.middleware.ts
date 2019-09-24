@@ -6,8 +6,8 @@ function verifyHeaders(
     req: Request,
     res: Response
 ): string {
-    let authorizationHeaders = req.headers.authorization || '';
-    let chunks = authorizationHeaders.split(' ');
+    const authorizationHeaders = req.headers.authorization || '';
+    const chunks = authorizationHeaders.split(' ');
 
     if (chunks.length === 0 || chunks[0] !== 'Bearer' || chunks[1].length === 0) {
         return '';
@@ -22,15 +22,15 @@ export async function isAuthenticated(
     next: NextFunction
 ) {
     try {
-        let token = verifyHeaders(req, res);
+        const token = verifyHeaders(req, res);
         if (token === '') {
             return res.answer(401, 'Not logged in');
         }
 
-        let keyPair: Types.ApplicationKeys = await VaultService.GetKeyPair('dowpro-ladder');
+        const keyPair: Types.ApplicationKeys = await VaultService.GetKeyPair('together');
 
-        let result = jwt.verify(token, keyPair.publicKey);
-        res.locals.login = (<any>result).guild;
+        const result = jwt.verify(token, keyPair.publicKey);
+       // res.locals.email = (<any>result).email;
 
         next();
     } catch (error) {

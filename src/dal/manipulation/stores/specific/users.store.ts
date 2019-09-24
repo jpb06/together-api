@@ -7,27 +7,27 @@ export abstract class UsersStore {
     public static storeName = 'users';
 
     public static async create(
-        guildId: string
+        username: string
     ): Promise<string> {
-        let password: string = [...Array(8)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
+        const password: string = [...Array(8)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
 
-        let hash = await Crypto.hash(password);
+        const hash = await Crypto.hash(password);
 
         await GenericStore.createOrUpdate(
             this.storeName,
-            { login: guildId },
-            { login: guildId, password: hash }
+            { email: username },
+            { email: username, password: hash }
         );
 
         return password;
     }
 
     public static async get(
-        guildId: string
+        username: string
     ): Promise<User | undefined> {
-        let result = await GenericStore.getBy(
+        const result = await GenericStore.getBy(
             this.storeName,
-            { login: guildId },
+            { email: username },
             {}
         ) as Array<User>;
 

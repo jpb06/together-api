@@ -25,10 +25,10 @@ export abstract class GenericStore {
         const client = await this.connect();
 
         try {
-            let db = client.db(DalConfiguration.database);
-            let collection = db.collection(collectionName);
+            const db = client.db(DalConfiguration.database);
+            const collection = db.collection(collectionName);
 
-            let result = await collection.insertOne(value);
+            const result = await collection.insertOne(value);
             if (result.result.ok === 1)
                 return true;
             else
@@ -48,14 +48,14 @@ export abstract class GenericStore {
         const client = await this.connect();
 
         try {
-            let db = client.db(DalConfiguration.database);
-            let collection = db.collection(collectionName);
+            const db = client.db(DalConfiguration.database);
+            const collection = db.collection(collectionName);
 
             // nb : upsert either
             // + Creates a new document if no documents match the filter. Returns null after inserting the new document, unless returnNewDocument is true.
             // + Updates a single document that matches the filter.
 
-            let result = await collection.findOneAndUpdate(term, { $set: value }, { upsert: true });
+            const result = await collection.findOneAndUpdate(term, { $set: value }, { upsert: true });
             if (result.ok === 1)
                 return true;
             else
@@ -75,11 +75,11 @@ export abstract class GenericStore {
         const client = await this.connect();
 
         try {
-            let db = client.db(DalConfiguration.database);
-            let collection = db.collection(collectionName);
+            const db = client.db(DalConfiguration.database);
+            const collection = db.collection(collectionName);
 
-            let deleteResult = await collection.deleteMany(term);
-            let insertResult = await collection.insertMany(values);
+            const deleteResult = await collection.deleteMany(term);
+            const insertResult = await collection.insertMany(values);
 
             if (deleteResult.result.ok === 1 && insertResult.result.ok === 1) {
                 return true;
@@ -107,8 +107,8 @@ export abstract class GenericStore {
         const client = await this.connect();
 
         try {
-            let db = client.db(DalConfiguration.database);
-            let collection = db.collection(collectionName);
+            const db = client.db(DalConfiguration.database);
+            const collection = db.collection(collectionName);
 
             const result = await collection.find().toArray();
 
@@ -129,8 +129,8 @@ export abstract class GenericStore {
         const client = await this.connect();
 
         try {
-            let db = client.db(DalConfiguration.database);
-            let collection = db.collection(collectionName);
+            const db = client.db(DalConfiguration.database);
+            const collection = db.collection(collectionName);
 
             let result = await collection
                 .find(term)
@@ -153,10 +153,10 @@ export abstract class GenericStore {
         const client = await this.connect();
 
         try {
-            let db = client.db(DalConfiguration.database);
-            let collection = db.collection(collectionName);
+            const db = client.db(DalConfiguration.database);
+            const collection = db.collection(collectionName);
 
-            let result = await collection.deleteOne(term);
+            const result = await collection.deleteOne(term);
 
             return result.deletedCount === 1;
         } finally {

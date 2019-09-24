@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="src\togetherapi.ts" />
+    <Content Include=".gitignore" />
     <Content Include="gulpfile.js">
       <SubType>Code</SubType>
     </Content>
@@ -83,6 +84,9 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\api\routes\security.routes.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="src\api\routes\user.routes.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\business\util\crypto.util.ts">

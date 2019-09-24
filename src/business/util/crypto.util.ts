@@ -3,8 +3,8 @@
 export async function hash(
     data: string
 ): Promise<string> {
-    let salt = await bcrypt.genSalt(12);
-    let hash = await bcrypt.hash(data, salt);
+    const salt = await bcrypt.genSalt(12);
+    const hash = await bcrypt.hash(data, salt);
 
     return hash;
 }
@@ -15,7 +15,7 @@ export async function verify(
     hash: string
 ): Promise<boolean> {
 
-    let result = await bcrypt.compare(data, hash);
+    const result = await bcrypt.compare(data, hash);
 
     return result;
 }

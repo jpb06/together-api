@@ -16,6 +16,13 @@ export function extendsImplementation(
 
         return true;
     }
+    req.validateUser = function (): boolean {
+        if ((req.body.user === undefined || req.body.user === '')) {
+            return false;
+        }
+
+        return true;
+    }
     // ----------------------------------------------------------------------------------------------
     // Response extends
     // ----------------------------------------------------------------------------------------------
