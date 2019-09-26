@@ -16,6 +16,16 @@ export function extendsImplementation(
 
         return true;
     }
+    req.validateUnforeseen = function (): boolean {
+        if ((req.body.ticket === undefined || req.body.ticket === '') ||
+            (req.body.date === undefined || !(req.body.date instanceof Date)) ||
+            (req.body.teamId === undefined || !(req.body.teamId instanceof Date))) {
+            return false;
+        }
+
+        return true;
+    }
+
     req.validateUser = function (): boolean {
         if ((req.body.user === undefined || req.body.user === '')) {
             return false;
