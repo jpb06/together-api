@@ -1,4 +1,4 @@
-﻿import { MongoClient } from 'mongodb';
+﻿import { MongoClient, ObjectId } from 'mongodb';
 
 import { DalConfiguration } from './../../configuration/dal.configuration';
 
@@ -19,7 +19,7 @@ export abstract class GenericStore {
     public static async create(
         collectionName: string,
         value: object
-    ): Promise<boolean> {
+    ): Promise<ObjectId | undefined> {
         DalConfiguration.VerifyDatabaseConfig();
 
         const client = await this.connect();
@@ -29,10 +29,11 @@ export abstract class GenericStore {
             const collection = db.collection(collectionName);
 
             const result = await collection.insertOne(value);
-            if (result.result.ok === 1)
-                return true;
+            if (result.insertedCount === 1)
+                return result.insertedId;
             else
-                return false;
+                return undefined;
+
         } finally {
             await client.close();
         }
