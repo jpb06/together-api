@@ -32,6 +32,7 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "mongodb": "^3.3.2",
     "rsa-vault": "0.0.9",
     "saslprep": "^1.0.3"

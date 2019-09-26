@@ -83,10 +83,17 @@
     <TypeScriptCompile Include="src\api\middleware\permissions.validation.middleware.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="src\api\routes\default.routes.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="src\api\routes\security.routes.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="src\api\routes\daily.routes.ts" />
     <TypeScriptCompile Include="src\api\routes\user.routes.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="src\business\cache.service.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\business\util\crypto.util.ts">
@@ -110,7 +117,9 @@
     <TypeScriptCompile Include="src\dal\manipulation\stores\dal.generic.store.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\dal\manipulation\stores\specific\users.store.ts">
+    <TypeScriptCompile Include="src\dal\manipulation\stores\specific\teams.store.ts" />
+    <TypeScriptCompile Include="src\dal\manipulation\stores\specific\users.store.ts" />
+    <TypeScriptCompile Include="src\dal\manipulation\stores\specific\daily.store.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\dal\types\persisted.types.ts">
