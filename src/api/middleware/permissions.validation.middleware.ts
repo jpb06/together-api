@@ -30,7 +30,7 @@ export async function isAuthenticated(
         const keyPair: Types.ApplicationKeys = await VaultService.GetKeyPair('together');
 
         const result = jwt.verify(token, keyPair.publicKey);
-       // res.locals.email = (<any>result).email;
+        res.locals.email = (<any>result).email;
 
         next();
     } catch (error) {
