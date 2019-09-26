@@ -2,7 +2,7 @@
 import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import { VaultService, Types } from 'rsa-vault';
-import { UsersStore } from './../../dal/manipulation/stores/specific/users.store';
+import { UsersStore } from '../../dal/manipulation/stores/specific/users.store';
 import * as CryptoUtil from './../../business/util/crypto.util';
 
 export function mapSecurityRoutes(app: Express) {
@@ -29,7 +29,9 @@ export function mapSecurityRoutes(app: Express) {
                 const gracePeriod = 20;
                 const expirationDate = moment().add(gracePeriod, 'minutes');
 
-                const jwtBearerToken = jwt.sign({ email: req.body.login }, applicationKeys.privateKey, {
+                const jwtBearerToken = jwt.sign({
+                    email: req.body.login
+                }, applicationKeys.privateKey, {
                     algorithm: 'RS256',
                     expiresIn: gracePeriod
                 });
