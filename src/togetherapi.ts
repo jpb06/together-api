@@ -11,6 +11,8 @@ import { apiConfig } from './config/api.config.interface';
 
 import { DalConfiguration } from './dal/configuration/dal.configuration';
 import { Configuration as RsaStoreConfiguration } from 'rsa-vault';
+import { mapUserRoutes } from './api/routes/user.routes.js';
+import { mapDefaultRoutes } from './api/routes/default.routes.js';
 
 DalConfiguration.Setup(apiConfig());
 RsaStoreConfiguration.Setup(apiConfig());
@@ -25,14 +27,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(extendsImplementation);
 
-app.get('/', (req, res) => {
-    res.send('Valid routes are in /api');
-});
-app.get('/api/', (req, res) => {
-    res.send('Together api.');
-});
-
+mapDefaultRoutes(app);
 mapSecurityRoutes(app);
+mapUserRoutes(app);
 
 app.set('port', 3001);
 
