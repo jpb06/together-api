@@ -4,15 +4,16 @@ import { Express, Response } from "express-serve-static-core";
 import * as bodyParser from "body-parser"; // pull information from HTML POST (express4)
 import * as cors from 'cors';
 
+import { mapDefaultRoutes } from './api/routes/default.routes.js';
 import { mapSecurityRoutes } from './api/routes/security.routes.js';
+import { mapUserRoutes } from './api/routes/user.routes.js';
+import { mapDailyRoutes } from './api/routes/daily.routes';
 import { extendsImplementation } from './api/middleware/extends.implementation.middleware';
 
 import { apiConfig } from './config/api.config.interface';
 
 import { DalConfiguration } from './dal/configuration/dal.configuration';
 import { Configuration as RsaStoreConfiguration } from 'rsa-vault';
-import { mapUserRoutes } from './api/routes/user.routes.js';
-import { mapDefaultRoutes } from './api/routes/default.routes.js';
 
 DalConfiguration.Setup(apiConfig());
 RsaStoreConfiguration.Setup(apiConfig());
@@ -30,6 +31,7 @@ app.use(extendsImplementation);
 mapDefaultRoutes(app);
 mapSecurityRoutes(app);
 mapUserRoutes(app);
+mapDailyRoutes(app);
 
 app.set('port', 3001);
 
