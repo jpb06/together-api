@@ -26,21 +26,40 @@ export function mapSecurityRoutes(app: Express) {
             if (isPasswordValid) {
                 const applicationKeys: Types.ApplicationKeys = await VaultService.GetKeyPair('together');
 
-                const gracePeriod = 20;
-                const expirationDate = moment().add(gracePeriod, 'minutes');
+                const expirationDate = moment().add(20, 'minutes');
 
                 const jwtBearerToken = jwt.sign({
                     email: req.body.login
                 }, applicationKeys.privateKey, {
                     algorithm: 'RS256',
-                    expiresIn: gracePeriod
+                    expiresIn: '20m'
                 });
 
-                return res.status(200).json({
-                    status: 200,
-                    token: jwtBearerToken,
-                    expirationDate: JSON.stringify(expirationDate)
-                });
+                user.session = {
+                    expirationDate: expirationDate.toDate()
+                };
+
+                let result = await UsersStore.Update(user);
+                if (result) {
+                    return res.status(200).json({
+                        status: 200,
+                        token: jwtBearerToken,
+                        user: {
+                            email: user.email,
+                            lastname: user.lastName,
+                            firstname: user.firstName,
+                            avatar: user.avatarName,
+                            teams: user.teams,
+                        },
+                        expirationDate: expirationDate.toISOString()
+                    });
+                } else {
+                    return res.status(500).json({
+                        status: 500,
+                        data: 'Unable to set user session'
+                    });
+                }
+                
             } else {
                 return res.status(401).json({
                     status: 401,
