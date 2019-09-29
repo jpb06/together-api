@@ -10,3 +10,4 @@
 /project-apparatus/private
 /src/config/prod.config.json
 /src/config/dev.config.json
+/release
