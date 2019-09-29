@@ -72,4 +72,17 @@ export abstract class UsersStore {
 
         return result[0];
     }
+
+    public static async Update(
+        user: User
+    ): Promise<boolean> {
+
+        const result = await GenericStore.createOrUpdate(
+            this.storeName,
+            { _id: user._id },
+            user
+        );
+
+        return result;
+    }
 }
