@@ -1,4 +1,7 @@
 ﻿import { Request, Response, NextFunction } from 'express';
+import { ObjectId } from 'bson';
+import { UnforeseenData, DailyPredicate } from '../../dal/types/internal.types';
+import { isDateValid, containsHex } from '../../business/util/validation.util';
 
 export function extendsImplementation(
     req: Request,
@@ -16,14 +19,49 @@ export function extendsImplementation(
 
         return true;
     }
-    req.validateUnforeseen = function (): boolean {
+
+    req.validateUnforeseen = function (): UnforeseenData | undefined {
         if ((req.body.ticket === undefined || req.body.ticket === '') ||
-            (req.body.date === undefined || !(req.body.date instanceof Date)) ||
-            (req.body.teamId === undefined || !(req.body.teamId instanceof Date))) {
-            return false;
+            (req.body.date === undefined || req.body.date === '') ||
+            (req.body.teamId === undefined || req.body.teamId === '')) {
+            return undefined;
         }
 
-        return true;
+        const date = new Date(req.body.date);
+
+        if (!isDateValid(date)) return undefined;
+        if (!containsHex(req.body.teamId, 24)) {
+            return undefined
+        };
+
+        const teamId = ObjectId.createFromHexString(req.body.teamId);
+
+        return {
+            ticketName: req.body.ticket,
+            teamId: teamId,
+            date: date
+        };
+    }
+
+    req.validateDailyPredicate = function (): DailyPredicate | undefined {
+        if ((req.body.date === undefined || req.body.date === '') ||
+            (req.body.teamId === undefined || req.body.teamId === '')) {
+            return undefined;
+        }
+
+        const date = new Date(req.body.date);
+
+        if (!isDateValid(date)) return undefined;
+        if (!containsHex(req.body.teamId, 24)) {
+            return undefined
+        };
+
+        const teamId = ObjectId.createFromHexString(req.body.teamId);
+
+        return {
+            teamId: teamId,
+            date: date
+        };
     }
 
     req.validateUser = function (): boolean {
@@ -53,7 +91,6 @@ export function extendsImplementation(
         status: number,
         message: string
     ): Response {
-        console.log(message);
         return res.status(status).json({
             status: status,
             message: message
@@ -63,7 +100,6 @@ export function extendsImplementation(
         status: number,
         message: string
     ): void {
-        console.log(message);
         res.writeHead(status, { 'Connection': 'close' });
         res.end(message);
     }
