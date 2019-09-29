@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { Daily, TerseUser } from '../../../types/persisted.types';
+import { Daily, User } from '../../../types/persisted.types';
 import { ObjectId } from 'bson';
 
 export abstract class DailyStore {
@@ -11,7 +11,7 @@ export abstract class DailyStore {
     ): any {
         const searchCriteria = {
             teamId: teamId,
-            day: date.getDay(),
+            day: date.getDate(),
             month: date.getMonth(),
             year: date.getFullYear()
         };
@@ -22,7 +22,7 @@ export abstract class DailyStore {
     public static async getCreateDaily(
         date: Date,
         teamId: ObjectId,
-    ): Promise<Daily> {
+    ): Promise<Daily | undefined> {
 
         let matches = await GenericStore.getBy(
             this.storeName, this.searchCriteria(date, teamId), { "created_at": 1 }
@@ -32,7 +32,7 @@ export abstract class DailyStore {
 
             let daily = {
                 teamId: teamId,
-                day: date.getDay(),
+                day: date.getDate(),
                 month: date.getMonth(),
                 year: date.getFullYear(),
                 durationIndicator: '',
@@ -46,7 +46,7 @@ export abstract class DailyStore {
             if (insertedId) {
                 return { ...daily, _id: insertedId };
             } else {
-                throw new Error('Unable to create Daily!');
+                return undefined;
             }
         } else {
             return matches[0];
@@ -56,21 +56,25 @@ export abstract class DailyStore {
     public static async addUnforeseenTicket(
         date: Date,
         teamId: ObjectId,
-        creator: TerseUser,
+        creator: User,
         ticketName: string
     ): Promise<boolean> {
 
         let daily = await this.getCreateDaily(date, teamId);
-        if(daily && daily.unforeseenTickets.filter(el => el.name === name).length === 0) {
+        if (daily && daily.unforeseenTickets.filter(el => el.name === ticketName).length === 0) {
 
             daily.unforeseenTickets.push({
-                creator: creator,
+                creator: {
+                    lastName: creator.lastName,
+                    firstName: creator.firstName,
+                    avatarName: creator.avatarName
+                },
                 name: ticketName
             });
 
             const result = await GenericStore.createOrUpdate(
                 this.storeName,
-                this.searchCriteria(date, teamId),
+                { _id: daily._id },
                 daily);
 
             return result;
