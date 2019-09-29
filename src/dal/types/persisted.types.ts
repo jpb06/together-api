@@ -41,7 +41,7 @@ export class Daily {
    Subsets
    ---------------------------------------------------------------------------------------------------------------*/
 export class Session {
-    expirationDate: string;
+    expirationDate: Date;
 }
 
 export class Ticket {
