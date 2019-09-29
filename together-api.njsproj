@@ -56,9 +56,13 @@
     <Content Include="src\config\dev.config.json">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\dal\types\internal.types.ts">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="release\" />
     <Folder Include="project-apparatus\" />
     <Folder Include="project-apparatus\private\" />
     <Folder Include="src\" />
@@ -97,6 +101,9 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\business\util\crypto.util.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="src\business\util\validation.util.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\config\api.config.interface.ts">
