@@ -59,6 +59,7 @@ export class Feeling {
 }
 
 export class TerseUser {
+    _id: ObjectId;
     lastName: string;
     firstName: string;
     avatarName: string;
