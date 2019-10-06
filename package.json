@@ -34,7 +34,7 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongodb": "^3.3.2",
-    "rsa-vault": "0.0.9",
+    "rsa-vault": "^0.1.1",
     "saslprep": "^1.0.3"
   }
 }
