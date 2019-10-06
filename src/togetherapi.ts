@@ -9,6 +9,7 @@ import { mapSecurityRoutes } from './api/routes/security.routes.js';
 import { mapUserRoutes } from './api/routes/user.routes.js';
 import { mapDailyRoutes } from './api/routes/daily.routes';
 import { extendsImplementation } from './api/middleware/extends.implementation.middleware';
+import { mapTeamRoutes } from './api/routes/team.route.js';
 
 import { apiConfig } from './config/api.config.interface';
 
@@ -32,6 +33,7 @@ mapDefaultRoutes(app);
 mapSecurityRoutes(app);
 mapUserRoutes(app);
 mapDailyRoutes(app);
+mapTeamRoutes(app);
 
 app.set('port', 3001);
 
