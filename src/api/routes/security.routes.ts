@@ -4,18 +4,15 @@ import * as moment from 'moment';
 import { VaultService, Types } from 'rsa-vault';
 import { UsersStore } from '../../dal/manipulation/stores/specific/users.store';
 import * as CryptoUtil from './../../business/util/crypto.util';
+import { containsIdentifiers } from "../middleware/requests.validation.middleware";
 
 export function mapSecurityRoutes(app: Express) {
 
-    app.post('/api/login', async (
+    app.post('/api/login', containsIdentifiers, async (
         req: Request,
         res: Response
     ) => {
         try {
-            if (!req.validateLogin()) {
-                return res.answer(400, 'Expecting identifiers');
-            }
-
             const user = await UsersStore.get(req.body.login);
             if (user === undefined) return res.status(401).json({
                 status: 401,

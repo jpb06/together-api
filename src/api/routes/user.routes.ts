@@ -8,14 +8,11 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            if (!req.validateUser()) {
-                return res.answer(400, 'Expecting an user');
-            }
 
-            
+
         } catch (error) {
             console.log(error);
             return res.answer(500, error.message);
         }
-    })
+    });
 }
