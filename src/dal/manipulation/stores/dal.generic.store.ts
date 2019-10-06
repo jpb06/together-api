@@ -10,7 +10,8 @@ export abstract class GenericStore {
                 user: DalConfiguration.username,
                 password: DalConfiguration.password
             },
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            useUnifiedTopology: true
         });
 
         return client;
