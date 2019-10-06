@@ -53,6 +53,29 @@ export abstract class DailyStore {
         }
     }
 
+    public static async setDuration(
+        date: Date,
+        teamId: ObjectId,
+        durationIndicator: string
+    ) : Promise<boolean> {
+
+        let daily = await this.getCreateDaily(date, teamId);
+        if (daily) {
+            daily.durationIndicator = durationIndicator;
+
+            const result = await GenericStore.createOrUpdate(
+                this.storeName,
+                { _id: daily._id },
+                daily);
+
+            return result;
+        }
+        else {
+            return false;
+        }
+
+    }
+
     public static async addUnforeseenTicket(
         date: Date,
         teamId: ObjectId,
@@ -65,6 +88,7 @@ export abstract class DailyStore {
 
             daily.unforeseenTickets.push({
                 creator: {
+                    _id: creator._id,
                     lastName: creator.lastName,
                     firstName: creator.firstName,
                     avatarName: creator.avatarName
