@@ -16,7 +16,7 @@ export async function containsIdentifiers(
     next();
 };
 
-export async function containsUnforeseenTicket(
+export async function containsTicket(
     req: Request,
     res: Response,
     next: NextFunction
@@ -41,6 +41,23 @@ export async function containsUnforeseenTicket(
         teamId: teamId,
         date: date
     };
+
+    next();
+};
+
+export async function containsAssignee(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (req.body.assigneeId === undefined
+     || req.body.assigneeId === ''
+     || !containsHex(req.body.assigneeId, 24)) {
+        return res.answer(400, 'Expecting an assignee id');
+    }
+
+    const assigneeId = ObjectId.createFromHexString(req.body.assigneeId);
+    res.locals.assigneeId = assigneeId;
 
     next();
 };
