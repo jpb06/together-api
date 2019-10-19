@@ -107,6 +107,44 @@ export abstract class DailyStore {
         }
     }
 
+    public static async addDoneTicket(
+        date: Date,
+        teamId: ObjectId,
+        creator: User,
+        assignee: User,
+        ticketName: string
+    ): Promise<boolean> {
+
+        let daily = await this.getCreateDaily(date, teamId);
+        if (daily && daily.doneTickets.filter(el => el.name === ticketName).length === 0) {
+
+            daily.doneTickets.push({
+                creator: {
+                    _id: creator._id,
+                    lastName: creator.lastName,
+                    firstName: creator.firstName,
+                    avatarName: creator.avatarName
+                },
+                assignee: {
+                    _id: assignee._id,
+                    lastName: assignee.lastName,
+                    firstName: assignee.firstName,
+                    avatarName: assignee.avatarName
+                },
+                name: ticketName
+            });
+
+            const result = await GenericStore.createOrUpdate(
+                this.storeName,
+                { _id: daily._id },
+                daily);
+
+            return result;
+        } else {
+            return false;
+        }
+    }
+
     public static async removeUnforeseenTicket(
         date: Date,
         teamId: ObjectId,
@@ -117,6 +155,29 @@ export abstract class DailyStore {
         if (daily) {
 
             daily.unforeseenTickets = daily.unforeseenTickets.filter(el => el.name !== name);
+
+            const result = await GenericStore.createOrUpdate(
+                this.storeName,
+                this.searchCriteria(date, teamId),
+                daily);
+
+            return result;
+
+        } else {
+            return false;
+        }
+    }
+
+    public static async removeDoneTicket(
+        date: Date,
+        teamId: ObjectId,
+        name: string
+    ): Promise<boolean> {
+
+        let daily = await this.getCreateDaily(date, teamId);
+        if (daily) {
+
+            daily.doneTickets = daily.doneTickets.filter(el => el.name !== name);
 
             const result = await GenericStore.createOrUpdate(
                 this.storeName,
