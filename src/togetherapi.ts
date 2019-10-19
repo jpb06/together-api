@@ -28,6 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(extendsImplementation);
+app.use((req, res, next) => setTimeout(next, 1500));
 
 mapDefaultRoutes(app);
 mapSecurityRoutes(app);
