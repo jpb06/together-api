@@ -1,6 +1,6 @@
-﻿import * as moment from 'moment';
-import { User } from '../dal/types/persisted.types';
+﻿import { User } from '../dal/types/persisted.types';
 import { UsersStore } from '../dal/manipulation/stores/specific/users.store';
+import { ObjectId } from 'bson';
 
 interface Dictionary<T> {
     [Key: string]: T;
@@ -10,7 +10,7 @@ export abstract class CacheService {
 
     private static cachedUsers: Dictionary<User> = {};
 
-    public static async GetUser(
+    public static async GetUserByEmail(
         email: string
     ): Promise<User | undefined> {
 
@@ -18,10 +18,30 @@ export abstract class CacheService {
         if (user) {
             return user;
         } else {
-            const persistedUser = await UsersStore.get(email);
+            const persistedUser = await UsersStore.getByEmail(email);
             if (persistedUser) {
 
                 this.cachedUsers[email] = persistedUser;
+                return persistedUser;
+            } else {
+                return undefined;
+            }
+        }
+    }
+
+    public static async GetUserById(
+        id: ObjectId
+    ): Promise<User | undefined> {
+        const key = id.toHexString();
+
+        let user = this.cachedUsers[key];
+        if (user) {
+            return user;
+        } else {
+            const persistedUser = await UsersStore.getById(id);
+            if (persistedUser) {
+
+                this.cachedUsers[key] = persistedUser;
                 return persistedUser;
             } else {
                 return undefined;
