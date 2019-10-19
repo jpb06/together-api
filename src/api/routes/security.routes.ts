@@ -5,6 +5,7 @@ import { VaultService, Types } from 'rsa-vault';
 import { UsersStore } from '../../dal/manipulation/stores/specific/users.store';
 import * as CryptoUtil from './../../business/util/crypto.util';
 import { containsIdentifiers } from "../middleware/requests.validation.middleware";
+import { CacheService } from "../../business/cache.service";
 
 export function mapSecurityRoutes(app: Express) {
 
@@ -13,7 +14,7 @@ export function mapSecurityRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const user = await UsersStore.get(req.body.login);
+            const user = await CacheService.GetUserByEmail(req.body.login);
             if (user === undefined) return res.status(401).json({
                 status: 401,
                 data: null
