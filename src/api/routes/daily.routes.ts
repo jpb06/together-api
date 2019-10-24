@@ -2,8 +2,8 @@
 import { isAuthenticated } from "../middleware/permissions.validation.middleware";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
 import { CacheService } from "../../business/cache.service";
-import { UnforeseenData, DailyPredicate } from "../../dal/types/internal.types";
-import { containsTicket, containsDailyPredicate, containsDurationIndicator, containsAssignee } from "../middleware/requests.validation.middleware";
+import { UnforeseenData, DailyPredicate, SubjectData } from "../../dal/types/internal.types";
+import { containsTicket, containsDailyPredicate, containsDurationIndicator, containsAssignee, containsSubject, containsSubjectId } from "../middleware/requests.validation.middleware";
 import { ObjectId } from "bson";
 
 export function mapDailyRoutes(app: Express) {
@@ -123,6 +123,49 @@ export function mapDailyRoutes(app: Express) {
                 res.answer(200, `${ticket.ticketName} deleted`);
             } else {
                 res.answer(500, `Unable to delete ticket ${ticket.ticketName}`);
+            }
+        } catch (error) {
+            return res.answer(500, error.message);
+        }
+    });
+
+    app.post('/api/daily/subjects/add', isAuthenticated, containsDailyPredicate, containsSubject, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const predicate = <DailyPredicate>res.locals.dailyPredicate;
+            const subject = <SubjectData>res.locals.subject;
+
+            const creator = await CacheService.GetUserByEmail(res.locals.email);
+            if (creator) {
+                const subjectId = await DailyStore.addSubject(predicate.date, predicate.teamId, creator, subject.type, subject.description);
+                if (subjectId) {
+                    res.answer(201, subjectId.toHexString());
+                } else {
+                    res.answer(500, 'Unable to create subject');
+                }
+            } else {
+                res.answer(500, "Unable to retrieve subject creator");
+            }
+        } catch (error) {
+            return res.answer(500, error.message);
+        }
+    });
+
+    app.post('/api/daily/subjects/remove', isAuthenticated, containsDailyPredicate, containsSubjectId, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const predicate = <DailyPredicate>res.locals.dailyPredicate;
+            const subjectId = <ObjectId>res.locals.subjectId;
+
+            const result = await DailyStore.removeSubject(predicate.date, predicate.teamId, subjectId);
+            if (result) {
+                res.answer(200, 'Subject deleted');
+            } else {
+                res.answer(500, 'Unable to delete subject');
             }
         } catch (error) {
             return res.answer(500, error.message);
