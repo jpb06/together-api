@@ -38,7 +38,7 @@ export abstract class DailyStore {
                 durationIndicator: '',
                 unforeseenTickets: [],
                 doneTickets: [],
-                issues: [],
+                subjects: [],
                 feelings: []
             };
 
@@ -178,6 +178,65 @@ export abstract class DailyStore {
         if (daily) {
 
             daily.doneTickets = daily.doneTickets.filter(el => el.name !== name);
+
+            const result = await GenericStore.createOrUpdate(
+                this.storeName,
+                this.searchCriteria(date, teamId),
+                daily);
+
+            return result;
+
+        } else {
+            return false;
+        }
+    }
+
+    public static async addSubject(
+        date: Date,
+        teamId: ObjectId,
+        creator: User,
+        type: number,
+        description: string
+    ): Promise<ObjectId | undefined> {
+
+        let daily = await this.getCreateDaily(date, teamId);
+        if (daily) {
+
+            const subjectId = new ObjectId();
+
+            daily.subjects.push({
+                creator: {
+                    _id: creator._id,
+                    lastName: creator.lastName,
+                    firstName: creator.firstName,
+                    avatarName: creator.avatarName
+                },
+                id: subjectId,
+                type: type,
+                description: description
+            });
+
+            const result = await GenericStore.createOrUpdate(
+                this.storeName,
+                { _id: daily._id },
+                daily);
+
+            return result ? subjectId : undefined;
+        } else {
+            return undefined;
+        }
+    }
+
+    public static async removeSubject(
+        date: Date,
+        teamId: ObjectId,
+        id: ObjectId
+    ): Promise<boolean> {
+
+        let daily = await this.getCreateDaily(date, teamId);
+        if (daily) {
+
+            daily.subjects = daily.subjects.filter(el => !el.id.equals(id));
 
             const result = await GenericStore.createOrUpdate(
                 this.storeName,
