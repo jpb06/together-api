@@ -33,7 +33,7 @@ export class Daily {
     durationIndicator: string;
     unforeseenTickets: Array<Ticket>;
     doneTickets: Array<Ticket>;
-    issues: Array<string>;
+    subjects: Array<Subject>;
     feelings: Array<Feeling>;
 }
 
@@ -49,6 +49,14 @@ export class Ticket {
     creator: TerseUser;
 
     name: string;
+}
+
+export class Subject {
+    creator: TerseUser;
+
+    id: ObjectId;
+    type: number;
+    description: string;
 }
 
 export class Feeling {
