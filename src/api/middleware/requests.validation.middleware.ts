@@ -119,3 +119,44 @@ export async function containsTeamId(
 
     next();
 };
+
+
+export async function containsSubject(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if ((req.body.type === undefined || req.body.type === '') ||
+        (req.body.description === undefined || req.body.description === '')) {
+        return res.answer(400, 'Expecting a subject');
+    }
+
+    const type = parseInt(req.body.type);
+    if (isNaN(type))
+        return res.answer(400, 'Expecting a subject');
+
+    res.locals.subject = {
+        type: type,
+        description: req.body.description
+    };
+
+    next();
+};
+
+export async function containsSubjectId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (req.body.subjectId === undefined ||
+        req.body.subjectId === '' ||
+        !containsHex(req.body.subjectId, 24)) {
+        return res.answer(400, 'Expecting a subject id');
+    }
+
+    const subjectId = ObjectId.createFromHexString(req.body.subjectId);
+
+    res.locals.subjectId = subjectId;
+
+    next();
+}
