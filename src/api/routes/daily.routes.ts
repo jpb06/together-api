@@ -2,8 +2,12 @@
 import { isAuthenticated } from "../middleware/permissions.validation.middleware";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
 import { CacheService } from "../../business/cache.service";
-import { UnforeseenData, DailyPredicate, SubjectData } from "../../dal/types/internal.types";
-import { containsTicket, containsDailyPredicate, containsDurationIndicator, containsAssignee, containsSubject, containsSubjectId } from "../middleware/requests.validation.middleware";
+import { UnforeseenData, DailyPredicate, SubjectData, FeelingData } from "../../dal/types/internal.types";
+import {
+    containsTicket, containsDailyPredicate, containsDurationIndicator, containsAssignee,
+    containsSubject, containsSubjectId,
+    containsFeeling, containsFeelingId
+} from "../middleware/requests.validation.middleware";
 import { ObjectId } from "bson";
 
 export function mapDailyRoutes(app: Express) {
@@ -166,6 +170,49 @@ export function mapDailyRoutes(app: Express) {
                 res.answer(200, 'Subject deleted');
             } else {
                 res.answer(500, 'Unable to delete subject');
+            }
+        } catch (error) {
+            return res.answer(500, error.message);
+        }
+    });
+
+    app.post('/api/daily/feelings/add', isAuthenticated, containsDailyPredicate, containsFeeling, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const predicate = <DailyPredicate>res.locals.dailyPredicate;
+            const feeling = <FeelingData>res.locals.feeling;
+
+            const creator = await CacheService.GetUserByEmail(res.locals.email);
+            if (creator) {
+                const feelingId = await DailyStore.addFeeling(predicate.date, predicate.teamId, creator, feeling.type, feeling.comment);
+                if (feelingId) {
+                    res.answer(201, feelingId.toHexString());
+                } else {
+                    res.answer(500, 'Unable to create feeling');
+                }
+            } else {
+                res.answer(500, "Unable to retrieve feeling creator");
+            }
+        } catch (error) {
+            return res.answer(500, error.message);
+        }
+    });
+
+    app.post('/api/daily/feelings/remove', isAuthenticated, containsDailyPredicate, containsFeelingId, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const predicate = <DailyPredicate>res.locals.dailyPredicate;
+            const feelingId = <ObjectId>res.locals.feelingId;
+
+            const result = await DailyStore.removeFeeling(predicate.date, predicate.teamId, feelingId);
+            if (result) {
+                res.answer(200, 'Feeling deleted');
+            } else {
+                res.answer(500, 'Unable to delete feeling');
             }
         } catch (error) {
             return res.answer(500, error.message);
