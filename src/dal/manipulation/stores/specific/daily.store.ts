@@ -249,4 +249,63 @@ export abstract class DailyStore {
             return false;
         }
     }
+
+    public static async addFeeling(
+        date: Date,
+        teamId: ObjectId,
+        creator: User,
+        type: number,
+        comment: string
+    ): Promise<ObjectId | undefined> {
+
+        let daily = await this.getCreateDaily(date, teamId);
+        if (daily) {
+
+            const feelingId = new ObjectId();
+
+            daily.feelings.push({
+                creator: {
+                    _id: creator._id,
+                    lastName: creator.lastName,
+                    firstName: creator.firstName,
+                    avatarName: creator.avatarName
+                },
+                id: feelingId,
+                type: type,
+                comment: comment
+            });
+
+            const result = await GenericStore.createOrUpdate(
+                this.storeName,
+                { _id: daily._id },
+                daily);
+
+            return result ? feelingId : undefined;
+        } else {
+            return undefined;
+        }
+    }
+
+    public static async removeFeeling(
+        date: Date,
+        teamId: ObjectId,
+        id: ObjectId
+    ): Promise<boolean> {
+
+        let daily = await this.getCreateDaily(date, teamId);
+        if (daily) {
+
+            daily.feelings = daily.feelings.filter(el => !el.id.equals(id));
+
+            const result = await GenericStore.createOrUpdate(
+                this.storeName,
+                this.searchCriteria(date, teamId),
+                daily);
+
+            return result;
+
+        } else {
+            return false;
+        }
+    }
 }
