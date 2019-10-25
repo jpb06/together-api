@@ -160,3 +160,43 @@ export async function containsSubjectId(
 
     next();
 }
+
+export async function containsFeeling(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if ((req.body.type === undefined || req.body.type === '') ||
+        (req.body.comment === undefined || req.body.comment === '')) {
+        return res.answer(400, 'Expecting a feeling');
+    }
+
+    const type = parseInt(req.body.type);
+    if (isNaN(type))
+        return res.answer(400, 'Expecting a feeling');
+
+    res.locals.feeling = {
+        type: type,
+        comment: req.body.comment
+    };
+
+    next();
+};
+
+export async function containsFeelingId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (req.body.feelingId === undefined ||
+        req.body.feelingId === '' ||
+        !containsHex(req.body.feelingId, 24)) {
+        return res.answer(400, 'Expecting a feeling id');
+    }
+
+    const feelingId = ObjectId.createFromHexString(req.body.feelingId);
+
+    res.locals.feelingId = feelingId;
+
+    next();
+}
