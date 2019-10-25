@@ -60,8 +60,9 @@ export class Subject {
 }
 
 export class Feeling {
-    subject: TerseUser;
+    creator: TerseUser;
 
+    id: ObjectId;
     type: number;
     comment: string;
 }
