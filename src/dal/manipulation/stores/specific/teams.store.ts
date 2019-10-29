@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { Team } from '../../../types/persisted.types';
+import { Team, TerseUser, User } from '../../../types/persisted.types';
 import { ObjectId } from 'bson';
 
 export abstract class TeamsStore {
@@ -27,5 +27,31 @@ export abstract class TeamsStore {
         if (result.length !== 1) return undefined;
 
         return result[0];
+    }
+
+    public static async GetTeamMembers(
+        teamId: ObjectId
+    ): Promise<Array<TerseUser> | undefined> {
+
+        const team = await this.get(teamId);
+        if (team) {
+            return team.members;
+        }
+        else {
+            return undefined;
+        }
+    }
+
+    public static async getUserTeams(
+        userId: ObjectId
+    ): Promise<Array<Team>> {
+
+        const teams = await GenericStore.getBy(
+            this.storeName,
+            { 'members': { $elemMatch: { _id: userId } } },
+            {}
+        ) as Array<Team>;
+
+        return teams;
     }
 }

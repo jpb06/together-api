@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { User, TerseUser } from '../../../types/persisted.types';
+import { User, TerseUser, Team } from '../../../types/persisted.types';
 import * as Crypto from './../../../../business/util/crypto.util';
 import { TeamsStore } from './teams.store';
 import { ObjectId } from 'bson';
@@ -100,23 +100,5 @@ export abstract class UsersStore {
         );
 
         return result;
-    }
-
-    public static async GetTeamMembers(
-        teamId: ObjectId
-    ): Promise<Array<TerseUser>> {
-
-        const users = await GenericStore.getBy(
-            this.storeName,
-            { 'teams': { $elemMatch: { _id: teamId } } },
-            {}
-        ) as Array<User>;
-
-        return users.map(el => ({
-            _id: el._id,
-            lastName: el.lastName,
-            firstName: el.firstName,
-            avatarName: el.avatarName
-        }));
     }
 }
