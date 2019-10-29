@@ -20,6 +20,7 @@ export class Team {
     _id: ObjectId;
 
     name: string;
+    members: Array<TerseUser>;
 }
 
 export class Daily {
