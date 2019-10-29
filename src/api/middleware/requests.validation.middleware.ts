@@ -200,3 +200,21 @@ export async function containsFeelingId(
 
     next();
 }
+
+export async function containsUserId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (req.body.userId === undefined ||
+        req.body.userId === '' ||
+        !containsHex(req.body.userId, 24)) {
+        return res.answer(400, 'Expecting a user id');
+    }
+
+    const userId = ObjectId.createFromHexString(req.body.userId);
+
+    res.locals.userId = userId;
+
+    next();
+}
