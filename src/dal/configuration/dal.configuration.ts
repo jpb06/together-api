@@ -22,11 +22,15 @@ export abstract class DalConfiguration {
     }
 
     public static VerifyDatabaseConfig(): void {
-        if (this.url === undefined || this.url.length === 0) {
-            throw new Error('No url specified to access mongodb instance');
+        if (!this.url
+          || this.url.length === 0
+          || this.url === ('mongodb://:')
+          || this.url.startsWith('mongodb://:')
+          || this.url.endsWith(':')) {
+            throw new Error('Invalid url specified to access mongodb instance');
         }
 
-        if (this.database === undefined || this.url.length === 0) {
+        if (!this.database || this.database.length === 0) {
             throw new Error('No database specified');
         }
     }
