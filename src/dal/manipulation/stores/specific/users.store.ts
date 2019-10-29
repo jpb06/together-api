@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { User, TerseUser, Team } from '../../../types/persisted.types';
+import { User } from '../../../types/persisted.types';
 import * as Crypto from './../../../../business/util/crypto.util';
 import { TeamsStore } from './teams.store';
 import { ObjectId } from 'bson';

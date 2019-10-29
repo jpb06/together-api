@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { Team, TerseUser, User } from '../../../types/persisted.types';
+import { Team, TerseUser } from '../../../types/persisted.types';
 import { ObjectId } from 'bson';
 
 export abstract class TeamsStore {
