@@ -43,10 +43,11 @@ export function mapSecurityRoutes(app: Express) {
                         status: 200,
                         token: jwtBearerToken,
                         user: {
+                            id: user._id,
                             email: user.email,
-                            lastname: user.lastName,
-                            firstname: user.firstName,
-                            avatar: user.avatarName,
+                            lastName: user.lastName,
+                            firstName: user.firstName,
+                            avatarName: user.avatarName,
                             teams: user.teams,
                         },
                         expirationDate: expirationDate.toISOString()
