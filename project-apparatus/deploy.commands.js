@@ -1,10 +1,7 @@
-﻿const gulp = require('gulp');
-const fs = require('fs');
+﻿const fs = require('fs');
 const util = require('util');
 const GulpSSH = require('gulp-ssh');
 const exec = util.promisify(require('child_process').exec);
-const ts = require("gulp-typescript");
-const sourcemaps = require('gulp-sourcemaps');
 
 const consoleUtil = require('./util/console.util.js');
 
@@ -22,26 +19,6 @@ main.sendFileToDeployServer = async function () {
     console.log('stderr:', stderr);
 
     console.log('Done.');
-};
-
-main.build = async function () {
-    consoleUtil.printHeader('Building solution ...');
-
-    let tsProject = ts.createProject('./tsconfig.json');
-    let reporter = ts.reporter.fullReporter();
-    let tsResult = tsProject.src()
-        .pipe(sourcemaps.init())
-        .pipe(tsProject(reporter));
-
-    return new Promise((resolve, reject) => {
-        tsResult.js
-            .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest("./dist/js"))
-            .on('error', reject)
-            .on('end', resolve);
-    }).then(function () {
-        console.log("Done.");
-    });
 };
 
 main.deploy = function () {
