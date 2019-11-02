@@ -5,7 +5,6 @@ const fs = require('fs-extra');
 const zipUtil = require('./project-apparatus/util/zip.util.js');
 const fsUtil = require('./project-apparatus/util/fs.util.js');
 const deployCommands = require('./project-apparatus/deploy.commands.js');
-const tscBuild = require('./project-apparatus/tasks/tsc.build.task.js');
 
 var pckg = require('./package.json');
 
@@ -35,14 +34,6 @@ gulp.task('clean', async () => {
 
 gulp.task('zip', async () => {
     await zipUtil.zipDirectory('./dist', `./release/togetherapi_${pckg.version}.zip`);
-});
-
-gulp.task('buildDev', async () => {
-    await tscBuild(false, true);
-});
-
-gulp.task('buildRelease', async () => {
-    await tscBuild(true, false);
 });
 
 gulp.task('deploy', async () => {
