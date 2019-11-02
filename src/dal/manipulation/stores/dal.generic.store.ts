@@ -31,7 +31,7 @@ export abstract class GenericStore {
 
             const result = await collection.insertOne(value);
             if (result.insertedCount === 1)
-                return result.insertedId;
+                return <ObjectId>result.insertedId;
             else
                 return undefined;
 
