@@ -6,7 +6,7 @@ const exec = util.promisify(require('child_process').exec);
 const ts = require("gulp-typescript");
 const sourcemaps = require('gulp-sourcemaps');
 
-const consoleUtil = require('./console.util.js');
+const consoleUtil = require('./util/console.util.js');
 
 const settings = require('./private/private.config.js');
 let pckg = require('./../package.json');
