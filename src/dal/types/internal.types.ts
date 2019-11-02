@@ -1,4 +1,6 @@
 ﻿import { ObjectId } from "bson";
+import { Team, Daily } from "./persisted.types";
+import { Moment } from "moment";
 
 /* ---------------------------------------------------------------------------------------------------------------
    Api
@@ -19,4 +21,11 @@ export class SubjectData {
 export class FeelingData {
     type: number;
     comment: string;
+}
+export class TimeLineEntry {
+    type: number;
+    team: Team;
+    entry: Daily;
+    shortTitle: string;
+    date: Moment;
 }
