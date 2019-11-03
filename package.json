@@ -7,6 +7,7 @@
     "name": "jpb06"
   },
   "scripts": {
+    "build": "tsc --build",
     "start": "npm run builddev && node dist/js/togetherapi",
     "clean": "gulp clean",
     "builddev": "gulp clean && gulp useDevConfig && tsc --build",
