@@ -35,23 +35,23 @@
     <Content Include="gulpfile.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="jest-mongodb-config.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="jest.config.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
-    <Content Include="project-apparatus\console.util.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="project-apparatus\deploy.commands.js">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="project-apparatus\fs.util.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="project-apparatus\private\private.config.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="project-apparatus\zip.util.js">
-      <SubType>Code</SubType>
-    </Content>
+    <Content Include="project-apparatus\util\console.util.js" />
+    <Content Include="project-apparatus\util\fs.util.js" />
+    <Content Include="project-apparatus\util\zip.util.js" />
     <Content Include="README.md" />
     <Content Include="src\config\dev.config.json">
       <SubType>Code</SubType>
@@ -62,6 +62,7 @@
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="project-apparatus\util\" />
     <Folder Include="release\" />
     <Folder Include="project-apparatus\" />
     <Folder Include="project-apparatus\private\" />
@@ -79,6 +80,10 @@
     <Folder Include="src\dal\manipulation\stores\specific\" />
     <Folder Include="src\business\" />
     <Folder Include="src\dal\types\" />
+    <Folder Include="src\tests\" />
+    <Folder Include="src\tests\units\" />
+    <Folder Include="src\tests\units\dal\" />
+    <Folder Include="src\tests\units\stores\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\api\middleware\extends.implementation.middleware.ts">
@@ -136,6 +141,15 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\dal\types\static.data.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="src\tests\units\dal\dal.configuration.test.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="src\tests\units\dal\mongodb.setup.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="src\tests\units\stores\users.store.test.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\typings.d.ts">
