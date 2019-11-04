@@ -16,10 +16,6 @@ gulp.task('moveReadme', async () => {
     await fs.copy('./README.md', './dist/README.md');
 });
 
-gulp.task('createFolders', async () => {
-    await fsUtil.createFolders();
-});
-
 gulp.task('useDevConfig', async () => {
     await fsUtil.useDevConfig();
 });
@@ -41,9 +37,7 @@ gulp.task('deploy', async () => {
 
     await fsUtil.useProdConfig();
 
-    await deployCommands.build();
-
-    await fsUtil.createFoldersForProd();
+    await deployCommands.buildForProd();
 
     await fsUtil.generatePackage();
 
@@ -52,5 +46,4 @@ gulp.task('deploy', async () => {
     await deployCommands.sendFileToDeployServer();
 
     return deployCommands.deploy();
-
 });
