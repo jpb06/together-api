@@ -12,14 +12,6 @@ main.cleanDist = async function () {
     console.log('Done.');
 };
 
-main.createFolders = async function () {
-    await fs.mkdir('./dist/js/temp');
-}
-
-main.createFoldersForProd = async function () {
-    await fs.mkdir('./dist/temp');
-}
-
 main.generatePackage = async function () {
     consoleUtil.printHeader('Generating package.json file ...');
 
