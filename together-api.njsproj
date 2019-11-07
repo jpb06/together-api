@@ -32,6 +32,8 @@
   <ItemGroup>
     <None Include="src\togetherapi.ts" />
     <Content Include=".gitignore" />
+    <Content Include=".vscode\launch.json" />
+    <Content Include=".vscode\tasks.json" />
     <Content Include="gulpfile.js">
       <SubType>Code</SubType>
     </Content>
@@ -49,6 +51,7 @@
     <Content Include="project-apparatus\private\private.config.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="project-apparatus\pscp.exe" />
     <Content Include="project-apparatus\util\console.util.js" />
     <Content Include="project-apparatus\util\fs.util.js" />
     <Content Include="project-apparatus\util\zip.util.js" />
@@ -62,6 +65,7 @@
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include=".vscode\" />
     <Folder Include="project-apparatus\util\" />
     <Folder Include="release\" />
     <Folder Include="project-apparatus\" />
