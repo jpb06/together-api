@@ -3,7 +3,7 @@ const archiver = require('archiver');
 
 const consoleUtil = require('./../util/console.util');
 
-var main = {};
+const main = {};
 
 main.zipDirectory = function (source, out) {
 

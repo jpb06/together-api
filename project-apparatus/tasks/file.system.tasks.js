@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 
 const consoleUtil = require('./../util/console.util');
 
-var main = {};
+const main = {};
 
 main.cleanDist = async function () {
 
@@ -28,7 +28,7 @@ main.generatePackage = async function () {
     };
 
     await fs.writeFile('./dist/package.json', JSON.stringify(distPackage, null, 2), 'utf8');
-}
+};
 
 main.useDevConfig = async function () {
 

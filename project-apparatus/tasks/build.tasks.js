@@ -3,7 +3,7 @@ const exec = util.promisify(require('child_process').exec);
 
 const consoleUtil = require('./../util/console.util');
 
-var main = {};
+const main = {};
 
 main.typescriptBuild = async function () {
 
