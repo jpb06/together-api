@@ -1,11 +1,12 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const archiver = require('archiver');
 
-const consoleUtil = require('./console.util.js');
+const consoleUtil = require('./../util/console.util');
 
 var main = {};
 
 main.zipDirectory = function (source, out) {
+
     consoleUtil.printHeader('Zipping dist folder ...');
 
     const archive = archiver('zip', { zlib: { level: 9 } });
@@ -18,7 +19,6 @@ main.zipDirectory = function (source, out) {
             .pipe(stream);
 
         stream.on('close', () => {
-            console.log('Done.');
             resolve();
         });
         archive.finalize();

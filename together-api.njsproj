@@ -45,16 +45,23 @@
     </Content>
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
-    <Content Include="project-apparatus\deploy.commands.js">
+    <Content Include="project-apparatus\tasks\build.tasks.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="project-apparatus\tasks\deploy.tasks.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="project-apparatus\private\private.config.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="project-apparatus\pscp.exe" />
+    <Content Include="project-apparatus\tasks\file.system.tasks.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="project-apparatus\tasks\zipping.tasks.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="project-apparatus\util\console.util.js" />
-    <Content Include="project-apparatus\util\fs.util.js" />
-    <Content Include="project-apparatus\util\zip.util.js" />
     <Content Include="README.md" />
     <Content Include="src\config\dev.config.json">
       <SubType>Code</SubType>
@@ -66,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".vscode\" />
+    <Folder Include="project-apparatus\tasks\" />
     <Folder Include="project-apparatus\util\" />
     <Folder Include="release\" />
     <Folder Include="project-apparatus\" />

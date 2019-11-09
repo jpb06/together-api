@@ -1,23 +1,23 @@
-﻿const fs = require('fs-extra');
+const fs = require('fs-extra');
 
-const consoleUtil = require('./console.util.js');
+const consoleUtil = require('./../util/console.util');
 
 var main = {};
 
 main.cleanDist = async function () {
+
     consoleUtil.printHeader('Cleaning dist folder ...');
 
     await fs.emptyDir('./dist');
-
-    console.log('Done.');
 };
 
 main.generatePackage = async function () {
+
     consoleUtil.printHeader('Generating package.json file ...');
 
     const package = JSON.parse(fs.readFileSync('./package.json').toString());
 
-    let distPackage = {
+    const distPackage = {
         name: package.name,
         version: package.version,
         description: package.version,
@@ -28,16 +28,27 @@ main.generatePackage = async function () {
     };
 
     await fs.writeFile('./dist/package.json', JSON.stringify(distPackage, null, 2), 'utf8');
-
-    console.log('Done.');
 }
 
 main.useDevConfig = async function () {
+
+    consoleUtil.printHeader('Using dev config ...');
+
     await fs.copy('./src/config/dev.config.json', './dist/js/config/current.config.json');
 };
 
 main.useProdConfig = async function () {
+
+    consoleUtil.printHeader('Using prod config ...');
+
     await fs.copy('./src/config/prod.config.json', './dist/js/config/current.config.json');
+};
+
+main.copyReadme = async function () {
+
+    consoleUtil.printHeader('Copying readme ...');
+
+    await fs.copy('./README.md', './dist/README.md');
 };
 
 module.exports = main;

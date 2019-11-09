@@ -7,11 +7,12 @@
     "name": "jpb06"
   },
   "scripts": {
-    "build": "tsc --build",
+    "build": "gulp tscbuild --silent",
     "start": "npm run builddev && node dist/js/togetherapi",
-    "clean": "gulp clean",
-    "builddev": "gulp clean && gulp useDevConfig && tsc --build",
-    "release": "gulp clean && gulp useReleaseConfig && tsc --build"
+    "clean": "gulp clean --silent",
+    "builddev": "gulp clean --silent && gulp useDevConfig --silent && gulp tscbuild --silent",
+    "release": "gulp clean --silent && gulp useReleaseConfig --silent && gulp tscbuild --silent",
+    "deploy": "gulp clean --silent && gulp tscbuild --silent && gulp deploy --silent"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^1.1.3",
@@ -24,13 +25,11 @@
     "@types/mongodb": "^3.3.8",
     "@types/node": "^8.10.58",
     "archiver": "^3.1.1",
+    "chalk": "^2.4.2",
     "fs-extra": "^8.1.0",
     "gulp": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.5",
     "gulp-ssh": "^0.7.0",
-    "gulp-typescript": "^5.0.1",
     "jest": "^24.9.0",
-    "merge-stream": "^2.0.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.4"
   },
