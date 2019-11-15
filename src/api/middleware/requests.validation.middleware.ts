@@ -218,3 +218,25 @@ export async function containsUserId(
 
     next();
 }
+
+export async function containsNewUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if ((req.body.firstName === undefined || req.body.firstName === '') ||
+        (req.body.lastName === undefined || req.body.lastName === '') ||
+        (req.body.email === undefined || req.body.email === '') ||
+        (req.body.password === undefined || req.body.password === '')) {
+        return res.answer(400, 'Expecting a new user');
+    }
+
+    res.locals.newUser = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password
+    };
+
+    next();
+}
