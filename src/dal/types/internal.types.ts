@@ -29,3 +29,9 @@ export class TimeLineEntry {
     shortTitle: string;
     date: Moment;
 }
+export class NewUserData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+}
