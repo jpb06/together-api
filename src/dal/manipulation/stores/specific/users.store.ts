@@ -36,6 +36,33 @@ export abstract class UsersStore {
         return password;
     }
 
+    public static async createUsingPassword(
+        email: string,
+        lastName: string,
+        firstName: string,
+        avatarName: string,
+        password: string
+    ): Promise<User | undefined> {
+
+        const hash = await Crypto.hash(password);
+
+        const user = await GenericStore.createOrUpdate(
+            this.storeName,
+            { email: email },
+            {
+                email: email,
+                password: hash,
+                lastName: lastName,
+                firstName: firstName,
+                avatarName: avatarName,
+                teams: [],
+                session: undefined
+            }
+        );
+
+        return <User | undefined>user;
+    }
+
     public static async addToTeam(
         email: string,
         teamId: ObjectId
@@ -47,11 +74,13 @@ export abstract class UsersStore {
             if (team) {
                 user.teams.push(team);
 
-                return await GenericStore.createOrUpdate(
+                const result = await GenericStore.createOrUpdate(
                     this.storeName,
                     { email: email },
                     user
                 );
+
+                return result ? true : false;
             } else {
                 return false;
             }
@@ -99,6 +128,6 @@ export abstract class UsersStore {
             user
         );
 
-        return result;
+        return result ? true : false;
     }
 }
