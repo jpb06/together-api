@@ -44,7 +44,7 @@ export abstract class GenericStore {
         collectionName: string,
         term: object,
         value: object
-    ): Promise<boolean> {
+    ): Promise<object | undefined> {
         DalConfiguration.VerifyDatabaseConfig();
 
         const client = await this.connect();
@@ -57,11 +57,11 @@ export abstract class GenericStore {
             // + Creates a new document if no documents match the filter. Returns null after inserting the new document, unless returnNewDocument is true.
             // + Updates a single document that matches the filter.
 
-            const result = await collection.findOneAndUpdate(term, { $set: value }, { upsert: true });
+            const result = await collection.findOneAndUpdate(term, { $set: value }, { upsert: true, returnOriginal:false });
             if (result.ok === 1)
-                return true;
+                return result.value;
             else
-                return false;
+                return undefined;
         } finally {
             await client.close();
         }
