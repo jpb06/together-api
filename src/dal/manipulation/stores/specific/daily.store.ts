@@ -68,7 +68,7 @@ export abstract class DailyStore {
                 { _id: daily._id },
                 daily);
 
-            return result;
+            return result ? true : false;
         }
         else {
             return false;
@@ -101,7 +101,7 @@ export abstract class DailyStore {
                 { _id: daily._id },
                 daily);
 
-            return result;
+            return result ? true : false;
         } else {
             return false;
         }
@@ -139,7 +139,7 @@ export abstract class DailyStore {
                 { _id: daily._id },
                 daily);
 
-            return result;
+            return result ? true : false;
         } else {
             return false;
         }
@@ -161,7 +161,7 @@ export abstract class DailyStore {
                 this.searchCriteria(date, teamId),
                 daily);
 
-            return result;
+            return result ? true : false;
 
         } else {
             return false;
@@ -184,7 +184,7 @@ export abstract class DailyStore {
                 this.searchCriteria(date, teamId),
                 daily);
 
-            return result;
+            return result ? true : false;
 
         } else {
             return false;
@@ -243,7 +243,7 @@ export abstract class DailyStore {
                 this.searchCriteria(date, teamId),
                 daily);
 
-            return result;
+            return result ? true : false;
 
         } else {
             return false;
@@ -302,7 +302,7 @@ export abstract class DailyStore {
                 this.searchCriteria(date, teamId),
                 daily);
 
-            return result;
+            return result ? true : false;
 
         } else {
             return false;
