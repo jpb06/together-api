@@ -10,7 +10,8 @@ export abstract class TeamsStore {
     ): Promise<ObjectId | undefined> {
 
         const insertedId = await GenericStore.create(this.storeName, {
-            name: name
+            name: name, 
+            members: []
         });
         return insertedId;
     }
@@ -53,5 +54,40 @@ export abstract class TeamsStore {
         ) as Array<Team>;
 
         return teams;
+    }
+
+    public static async exists(
+        name: string
+    ): Promise<boolean> {
+
+        const result = await GenericStore.getBy(
+            this.storeName,
+            { name: name },
+            {}) as Array<Team>;
+
+        if (result.length === 1) return true;
+
+        return false;
+    }
+
+    public static async addUserToTeam(
+        teamId: ObjectId,
+        user: TerseUser
+    ): Promise<boolean> {
+
+        const result = await GenericStore.getBy(
+            this.storeName,
+            { _id: teamId },
+            {}) as Array<Team>;
+
+        if (result.length === 1) {
+            result[0].members.push(user);
+            const persistedTeam = await GenericStore.createOrUpdate(this.storeName, { _id: teamId }, result[0]);
+            if (persistedTeam) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

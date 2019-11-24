@@ -240,3 +240,17 @@ export async function containsNewUser(
 
     next();
 }
+
+export async function containsTeamName(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (req.body.teamName === undefined || req.body.teamName === '') {
+        return res.answer(400, 'Expecting a team name');
+    }
+
+    res.locals.teamName = req.body.teamName;
+
+    next();
+}

@@ -5,7 +5,7 @@
    ---------------------------------------------------------------------------------------------------------------*/
 export class User {
     _id: ObjectId;
-    teams: Array<Team>;
+    teams: Array<BareTeam>;
 
     email: string;
     password: string;
@@ -15,11 +15,12 @@ export class User {
     firstName: string;
     avatarName: string;
 }
-
-export class Team {
+export class BareTeam {
     _id: ObjectId;
 
     name: string;
+}
+export class Team extends BareTeam {
     members: Array<TerseUser>;
 }
 

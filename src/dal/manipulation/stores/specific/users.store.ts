@@ -72,7 +72,10 @@ export abstract class UsersStore {
         if (user && user.teams.filter(el => el._id.equals(teamId)).length === 0) {
             const team = await TeamsStore.get(teamId);
             if (team) {
-                user.teams.push(team);
+                user.teams.push({
+                    _id: team._id,
+                    name: team.name 
+                });
 
                 const result = await GenericStore.createOrUpdate(
                     this.storeName,
