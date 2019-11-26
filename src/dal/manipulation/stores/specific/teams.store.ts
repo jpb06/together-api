@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { Team, TerseUser } from '../../../types/persisted.types';
+import { Team, TerseUser, MembershipRequest, TeamMember } from '../../../types/persisted.types';
 import { ObjectId } from 'bson';
 
 export abstract class TeamsStore {
@@ -11,7 +11,8 @@ export abstract class TeamsStore {
 
         const insertedId = await GenericStore.create(this.storeName, {
             name: name, 
-            members: []
+            members: [],
+            membershipRequests: []
         });
         return insertedId;
     }
@@ -32,11 +33,24 @@ export abstract class TeamsStore {
 
     public static async GetTeamMembers(
         teamId: ObjectId
-    ): Promise<Array<TerseUser> | undefined> {
+    ): Promise<Array<TeamMember> | undefined> {
 
         const team = await this.get(teamId);
         if (team) {
             return team.members;
+        }
+        else {
+            return undefined;
+        }
+    }
+
+    public static async GetTeamMembershipRequests(
+        teamId: ObjectId
+    ): Promise<Array<MembershipRequest> | undefined> {
+
+        const team = await this.get(teamId);
+        if (team) {
+            return team.membershipRequests;
         }
         else {
             return undefined;
@@ -72,7 +86,7 @@ export abstract class TeamsStore {
 
     public static async addUserToTeam(
         teamId: ObjectId,
-        user: TerseUser
+        user: TeamMember
     ): Promise<boolean> {
 
         const result = await GenericStore.getBy(
@@ -89,5 +103,18 @@ export abstract class TeamsStore {
         }
 
         return false;
+    }
+
+    public static async Update(
+        team: Team
+    ): Promise<boolean> {
+
+        const result = await GenericStore.createOrUpdate(
+            this.storeName,
+            { _id: team._id },
+            team
+        );
+
+        return result ? true : false;
     }
 }
