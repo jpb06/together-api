@@ -1,6 +1,6 @@
 ﻿import { Express, Request, Response } from "express-serve-static-core";
 import { isAuthenticated } from "../middleware/permissions.validation.middleware";
-import { containsUserId, containsNewUser } from "../middleware/requests.validation.middleware";
+import { containsUserId, containsNewUser, containsTeamId, containsUserEmail } from "../middleware/requests.validation.middleware";
 import { ObjectId } from "bson";
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
@@ -8,6 +8,8 @@ import { TimeLineEntry, NewUserData } from "../../dal/types/internal.types";
 import moment = require("moment");
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 import { CacheService } from "../../business/cache.service";
+import { userToTerseUser } from "../../dal/types/conversion.helper";
+import { MembershipRequest, TerseUser } from "../../dal/types/persisted.types";
 
 export function mapUserRoutes(app: Express) {
 
@@ -26,7 +28,7 @@ export function mapUserRoutes(app: Express) {
                 });
             } else {
 
-                const persistedUser = await UsersStore.createUsingPassword(
+                const persistedUser = await UsersStore.create(
                     newUser.email,
                     newUser.lastName, newUser.firstName,
                     '', // no avatar for now
@@ -109,4 +111,60 @@ export function mapUserRoutes(app: Express) {
             return res.answer(500, error.message);
         }
     });
+
+    app.post('/api/user/requestMembership', isAuthenticated, containsUserEmail, containsTeamId, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const referrerEmail = <string>res.locals.email; 
+            const targetUserEmail = <string>res.locals.userEmail;
+            const teamId = <ObjectId>res.locals.teamId;
+
+            const referrer = await CacheService.GetUserByEmail(referrerEmail);
+            if (!referrer) {
+                return res.answer(520, 'Unable to get the membership request referrer');
+            }
+
+            const targetUser = await CacheService.GetUserByEmail(targetUserEmail);
+            if (!targetUser) {
+                return res.answer(520, 'We could not find any user matching this email. Mind checking again the address for any typo?');
+            }
+
+            const team = await TeamsStore.get(teamId);
+            if (!team) {
+                return res.answer(520, 'Unable to locate the selected team');
+            }
+
+            if (team.membershipRequests.find(el => (<TerseUser>el.user)._id.equals(targetUser._id))
+            ||  team.members.find(el => el._id.equals(targetUser._id))) {
+                return res.answer(520, 'This user has already been added to the team');
+            }
+
+            const membershipRequest: MembershipRequest = {
+                teamId: teamId,
+                referrer: userToTerseUser(referrer),
+                date: moment().toDate()
+            };
+            const terseTargetUser = userToTerseUser(targetUser);
+
+            targetUser.membershipRequests.push(membershipRequest);
+            team.membershipRequests.push({
+                ...membershipRequest,
+                user: terseTargetUser
+            });
+
+            const userAlterationresult = await UsersStore.Update(targetUser);
+            const teamAlterationresult = await TeamsStore.Update(team);
+            if (userAlterationresult && teamAlterationresult) {
+                return res.populate(terseTargetUser);
+            } else {
+                return res.answer(520, 'An error occured while saving the membership request');
+            }
+        } catch (error) {
+            console.log(error);
+            return res.answer(500, error.message);
+        }
+    });
+
 }
