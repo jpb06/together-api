@@ -1,6 +1,7 @@
 ﻿import { GenericStore } from '../dal.generic.store';
 import { Daily, User } from '../../../types/persisted.types';
 import { ObjectId } from 'bson';
+import { userToTerseUser } from '../../../types/conversion.helper';
 
 export abstract class DailyStore {
     public static storeName = 'daily';
@@ -87,12 +88,7 @@ export abstract class DailyStore {
         if (daily && daily.unforeseenTickets.filter(el => el.name === ticketName).length === 0) {
 
             daily.unforeseenTickets.push({
-                creator: {
-                    _id: creator._id,
-                    lastName: creator.lastName,
-                    firstName: creator.firstName,
-                    avatarName: creator.avatarName
-                },
+                creator: userToTerseUser(creator),
                 name: ticketName
             });
 
@@ -119,18 +115,8 @@ export abstract class DailyStore {
         if (daily && daily.doneTickets.filter(el => el.name === ticketName).length === 0) {
 
             daily.doneTickets.push({
-                creator: {
-                    _id: creator._id,
-                    lastName: creator.lastName,
-                    firstName: creator.firstName,
-                    avatarName: creator.avatarName
-                },
-                assignee: {
-                    _id: assignee._id,
-                    lastName: assignee.lastName,
-                    firstName: assignee.firstName,
-                    avatarName: assignee.avatarName
-                },
+                creator: userToTerseUser(creator),
+                assignee: userToTerseUser(assignee),
                 name: ticketName
             });
 
@@ -205,12 +191,7 @@ export abstract class DailyStore {
             const subjectId = new ObjectId();
 
             daily.subjects.push({
-                creator: {
-                    _id: creator._id,
-                    lastName: creator.lastName,
-                    firstName: creator.firstName,
-                    avatarName: creator.avatarName
-                },
+                creator: userToTerseUser(creator),
                 id: subjectId,
                 type: type,
                 description: description
@@ -264,12 +245,7 @@ export abstract class DailyStore {
             const feelingId = new ObjectId();
 
             daily.feelings.push({
-                creator: {
-                    _id: creator._id,
-                    lastName: creator.lastName,
-                    firstName: creator.firstName,
-                    avatarName: creator.avatarName
-                },
+                creator: userToTerseUser(creator),
                 id: feelingId,
                 type: type,
                 comment: comment
