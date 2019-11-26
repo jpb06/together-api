@@ -6,6 +6,7 @@
 export class User {
     _id: ObjectId;
     teams: Array<BareTeam>;
+    membershipRequests: Array<MembershipRequest>;
 
     email: string;
     password: string;
@@ -21,7 +22,8 @@ export class BareTeam {
     name: string;
 }
 export class Team extends BareTeam {
-    members: Array<TerseUser>;
+    members: Array<TeamMember>;
+    membershipRequests: Array<MembershipRequest>;
 }
 
 export class Daily {
@@ -76,3 +78,13 @@ export class TerseUser {
     avatarName: string;
 }
 
+export class TeamMember extends TerseUser {
+    status: string;
+}
+
+export class MembershipRequest {
+    teamId: ObjectId;
+    referrer: TerseUser;
+    date: Date;
+    user?: TerseUser;
+}
