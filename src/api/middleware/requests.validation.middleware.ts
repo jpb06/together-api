@@ -219,6 +219,22 @@ export async function containsUserId(
     next();
 }
 
+export async function containsUserEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (req.body.userEmail === undefined ||
+        req.body.userEmail === '' ||
+        !req.body.userEmail.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
+        return res.answer(400, 'Expecting a user email');
+    }
+
+    res.locals.userEmail = req.body.userEmail;
+
+    next();
+}
+
 export async function containsNewUser(
     req: Request,
     res: Response,
