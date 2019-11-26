@@ -4,6 +4,7 @@ import { containsTeamId, containsTeamName } from "../middleware/requests.validat
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { CacheService } from "../../business/cache.service";
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
+import { userToTerseUser } from "../../dal/types/conversion.helper";
 
 export function mapTeamRoutes(app: Express) {
 
@@ -27,10 +28,8 @@ export function mapTeamRoutes(app: Express) {
                     const creator = await CacheService.GetUserByEmail(creatorEmail);
                     if (creator) {
                         const teamAlterationResult = await TeamsStore.addUserToTeam(teamId, {
-                            _id: creator._id,
-                            firstName: creator.firstName,
-                            lastName: creator.lastName,
-                            avatarName: creator.avatarName
+                            ...userToTerseUser(creator),
+                            status: 'creator'
                         });
                         const userAlterationResult = await UsersStore.addToTeam(creator.email, teamId);
 
