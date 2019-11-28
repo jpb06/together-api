@@ -1,6 +1,6 @@
 ﻿import { Express, Request, Response } from "express-serve-static-core";
 import { isAuthenticated } from "../middleware/permissions.validation.middleware";
-import { containsUserId, containsNewUser, containsTeamId, containsUserEmail } from "../middleware/requests.validation.middleware";
+import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, containsTeamName } from "../middleware/requests.validation.middleware";
 import { ObjectId } from "bson";
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
@@ -8,8 +8,8 @@ import { TimeLineEntry, NewUserData } from "../../dal/types/internal.types";
 import moment = require("moment");
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 import { CacheService } from "../../business/cache.service";
-import { userToTerseUser } from "../../dal/types/conversion.helper";
-import { MembershipRequest, TerseUser } from "../../dal/types/persisted.types";
+import { userToTerseUser, TeamToBareTeam } from "../../dal/types/conversion.helper";
+import { TerseUser } from "../../dal/types/persisted.types";
 
 export function mapUserRoutes(app: Express) {
 
@@ -112,7 +112,7 @@ export function mapUserRoutes(app: Express) {
         }
     });
 
-    app.post('/api/user/requestMembership', isAuthenticated, containsUserEmail, containsTeamId, async (
+    app.post('/api/user/inviteUser', isAuthenticated, containsUserEmail, containsTeamId, async (
         req: Request,
         res: Response
     ) => {
@@ -123,7 +123,7 @@ export function mapUserRoutes(app: Express) {
 
             const referrer = await CacheService.GetUserByEmail(referrerEmail);
             if (!referrer) {
-                return res.answer(520, 'Unable to get the membership request referrer');
+                return res.answer(520, 'Unable to get the invite referrer user');
             }
 
             const targetUser = await CacheService.GetUserByEmail(targetUserEmail);
@@ -136,28 +136,70 @@ export function mapUserRoutes(app: Express) {
                 return res.answer(520, 'Unable to locate the selected team');
             }
 
-            if (team.membershipRequests.find(el => (<TerseUser>el.user)._id.equals(targetUser._id))
+            if (team.invitedUsers.find(el => (<TerseUser>el.invitee)._id.equals(targetUser._id))
             ||  team.members.find(el => el._id.equals(targetUser._id))) {
                 return res.answer(520, 'This user has already been added to the team');
             }
 
-            const membershipRequest: MembershipRequest = {
-                teamId: teamId,
-                referrer: userToTerseUser(referrer),
-                date: moment().toDate()
-            };
+            const requestDate = moment().toDate();
+            const terseRefered = userToTerseUser(referrer);
             const terseTargetUser = userToTerseUser(targetUser);
-
-            targetUser.membershipRequests.push(membershipRequest);
-            team.membershipRequests.push({
-                ...membershipRequest,
-                user: terseTargetUser
+            team.invitedUsers.push({
+                date: requestDate,
+                referrer: terseRefered,
+                invitee: terseTargetUser
             });
-
+            targetUser.teamInvites.push({
+                date: requestDate,
+                referrer: terseRefered,
+                team: TeamToBareTeam(team)
+            });
+            
             const userAlterationresult = await UsersStore.Update(targetUser);
             const teamAlterationresult = await TeamsStore.Update(team);
             if (userAlterationresult && teamAlterationresult) {
                 return res.populate(terseTargetUser);
+            } else {
+                return res.answer(520, 'An error occured while saving the team invitation');
+            }
+        } catch (error) {
+            console.log(error);
+            return res.answer(500, error.message);
+        }
+    });
+
+    app.post('/api/user/requestMembership', isAuthenticated, containsTeamName, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const userEmail = <string>res.locals.email;
+            const teamName = <string>res.locals.teamName;
+
+            const user = await CacheService.GetUserByEmail(userEmail);
+            if (!user) {
+                return res.answer(520, 'Unable to get the source user');
+            }
+
+            const team = await TeamsStore.getByName(teamName);
+            if (!team) {
+                return res.answer(520, 'This team does not exist');
+            }
+
+            const requestDate = moment().toDate();
+            user.teamMembershipRequests.push({
+                date: requestDate,
+                team: TeamToBareTeam(team)
+            });
+            team.membershipRequests.push({
+                date: requestDate,
+                user: userToTerseUser(user)
+            });
+
+            const userAlterationresult = await UsersStore.Update(user);
+            const teamAlterationresult = await TeamsStore.Update(team);
+            if (userAlterationresult && teamAlterationresult) {
+                return res.answer(200, 'Membership request sent');
             } else {
                 return res.answer(520, 'An error occured while saving the membership request');
             }
