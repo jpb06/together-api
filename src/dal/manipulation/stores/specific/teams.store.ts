@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { Team, TerseUser, MembershipRequest, TeamMember } from '../../../types/persisted.types';
+import { Team, TeamMember, InvitedUser, MembershipRequest } from '../../../types/persisted.types';
 import { ObjectId } from 'bson';
 
 export abstract class TeamsStore {
@@ -12,6 +12,7 @@ export abstract class TeamsStore {
         const insertedId = await GenericStore.create(this.storeName, {
             name: name, 
             members: [],
+            invitedUsers: [],
             membershipRequests: []
         });
         return insertedId;
@@ -31,6 +32,20 @@ export abstract class TeamsStore {
         return result[0];
     }
 
+    public static async getByName(
+        name: string
+    ): Promise<Team | undefined> {
+
+        const result = await GenericStore.getBy(
+            this.storeName,
+            { name: name },
+            {}) as Array<Team>;
+
+        if (result.length !== 1) return undefined;
+
+        return result[0];
+    }
+
     public static async GetTeamMembers(
         teamId: ObjectId
     ): Promise<Array<TeamMember> | undefined> {
@@ -38,6 +53,19 @@ export abstract class TeamsStore {
         const team = await this.get(teamId);
         if (team) {
             return team.members;
+        }
+        else {
+            return undefined;
+        }
+    }
+
+    public static async GetTeamInvitedUsers(
+        teamId: ObjectId
+    ): Promise<Array<InvitedUser> | undefined> {
+
+        const team = await this.get(teamId);
+        if (team) {
+            return team.invitedUsers;
         }
         else {
             return undefined;
@@ -95,6 +123,9 @@ export abstract class TeamsStore {
             {}) as Array<Team>;
 
         if (result.length === 1) {
+            result[0].invitedUsers = result[0].invitedUsers.filter(el => !el.invitee._id.equals(user._id));
+            result[0].membershipRequests = result[0].membershipRequests.filter(el => !el.user._id.equals(user._id));
+
             result[0].members.push(user);
             const persistedTeam = await GenericStore.createOrUpdate(this.storeName, { _id: teamId }, result[0]);
             if (persistedTeam) {
