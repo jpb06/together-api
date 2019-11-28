@@ -28,7 +28,8 @@ export abstract class UsersStore {
                 firstName: firstName,
                 avatarName: avatarName,
                 teams: [],
-                membershipRequests: [],
+                teamInvites: [],
+                teamMembershipRequests: [],
                 session: undefined
             }
         );
