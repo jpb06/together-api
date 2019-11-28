@@ -49,7 +49,8 @@ export function mapSecurityRoutes(app: Express) {
                             firstName: user.firstName,
                             avatarName: user.avatarName,
                             teams: user.teams,
-                            membershipRequests: user.membershipRequests
+                            teamInvites: user.teamInvites,
+                            teamMembershipRequests: user.teamMembershipRequests
                         },
                         expirationDate: expirationDate.toISOString()
                     });
@@ -59,7 +60,6 @@ export function mapSecurityRoutes(app: Express) {
                         data: 'Unable to set user session'
                     });
                 }
-                
             } else {
                 return res.status(401).json({
                     status: 401,
