@@ -4,7 +4,7 @@ import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, con
 import { ObjectId } from "bson";
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
-import { TimeLineEntry, NewUserData } from "../../dal/types/internal.types";
+import { NewUserData, TimeLine, TeamTimeLine } from "../../dal/types/internal.types";
 import moment = require("moment");
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 import { CacheService } from "../../business/cache.service";
@@ -84,27 +84,75 @@ export function mapUserRoutes(app: Express) {
         try {
             const userId = <ObjectId>res.locals.userId;
 
-            const userTeams = await TeamsStore.getUserTeams(userId);
-            if (userTeams) {
-                let entries: Array<TimeLineEntry> = [];
+            const user = await CacheService.GetUserById(userId);
+            if (user) {
+                let timeline: TimeLine = {
+                    events: [],
+                    teams: []
+                };
 
-                for (let i = 0; i < userTeams.length; i++) {
-                    const team = userTeams[i];
-                    const teamDailies = await DailyStore.getDailies(team._id);
-                    entries = entries.concat(teamDailies.map(daily => ({
-                        type: 1,
-                        team: team,
-                        entry: daily,
-                        shortTitle: `Daily - ${daily.day.toString().padStart(2, '0')}/${(daily.month + 1).toString().padStart(2, '0')}/${daily.year}`,
-                        date: moment.utc(`${daily.year}-${(daily.month + 1).toString().padStart(2, '0')}-${daily.day.toString().padStart(2, '0')}`)
-                    })));
+                // Invitations sent to the caller
+                timeline.events = timeline.events.concat(user.teamInvites.map(invite => ({
+                    type: 2,
+                    entry: invite,
+                    shortTitle: `Invitation - ${moment(invite.date).format('DD/MM/YYYY')}`,
+                    date: moment(invite.date)
+                }))).sort((a, b) => b.date.unix() - a.date.unix());
+                // Requests to join a team sent by the caller
+                timeline.events = timeline.events.concat(user.teamMembershipRequests.map(request => ({
+                    type: 3,
+                    entry: request,
+                    shortTitle: `Join request - ${moment(request.date).format('DD/MM/YYYY')}`,
+                    date: moment(request.date)
+                }))).sort((a, b) => b.date.unix() - a.date.unix());
+
+                const userTeams = await TeamsStore.getUserTeams(userId);
+                if (userTeams) {
+                    for (let i = 0; i < userTeams.length; i++) {
+                        const team = userTeams[i];
+
+                        const teamTimeLine: TeamTimeLine = {
+                            _id: team._id,
+                            name: team.name,
+                            events: []
+                        };
+
+                        // invitations sent by team members to outsiders
+                        teamTimeLine.events = teamTimeLine.events.concat(team.invitedUsers.map(invite => ({
+                            type: 2,
+                            entry: invite,
+                            shortTitle: `Invite - ${moment(invite.date).format('DD/MM/YYYY')}`,
+                            date: moment(invite.date)
+                        })));
+
+                        // Requests by outsiders to join the team
+                        teamTimeLine.events = teamTimeLine.events.concat(team.membershipRequests.map(request => ({
+                            type: 3,
+                            entry: request,
+                            shortTitle: `Join request - ${moment(request.date).format('DD/MM/YYYY')}`,
+                            date: moment(request.date)
+                        })));
+
+                        const teamDailies = await DailyStore.getDailies(team._id);
+                        // daily entries
+                        teamTimeLine.events = teamTimeLine.events.concat(teamDailies.map(daily => ({
+                            type: 1,
+                            team: team,
+                            entry: daily,
+                            shortTitle: `Daily - ${daily.day.toString().padStart(2, '0')}/${(daily.month + 1).toString().padStart(2, '0')}/${daily.year}`,
+                            date: moment.utc(`${daily.year}-${(daily.month + 1).toString().padStart(2, '0')}-${daily.day.toString().padStart(2, '0')}`)
+                        })));
+
+                        teamTimeLine.events = teamTimeLine.events.sort((a, b) => b.date.unix() - a.date.unix());
+                        timeline.teams.push(teamTimeLine);
+                    }
+
+                    res.populate(timeline);
+                } else {
+                    res.answer(500, 'Unable to get user timeline');
                 }
-
-                const sorted = entries.sort((a, b) => b.date.unix() - a.date.unix());
-
-                res.populate(sorted);
             } else {
-                res.answer(500, 'Unable to get user timeline');
+                res.answer(500, 'Unable to get user account');
             }
         } catch (error) {
             console.log(error);
