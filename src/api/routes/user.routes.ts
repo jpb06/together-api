@@ -4,7 +4,7 @@ import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, con
 import { ObjectId } from "bson";
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
-import { NewUserData, TimeLine, TeamTimeLine } from "../../dal/types/internal.types";
+import { NewUserData, TimeLine, TeamTimeLine, TimeLineEntryType } from "../../dal/types/internal.types";
 import moment = require("moment");
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 import { CacheService } from "../../business/cache.service";
@@ -93,15 +93,21 @@ export function mapUserRoutes(app: Express) {
 
                 // Invitations sent to the caller
                 timeline.events = timeline.events.concat(user.teamInvites.map(invite => ({
-                    type: 2,
-                    entry: invite,
+                    type: TimeLineEntryType.UserInvite,
+                    entry: {
+                        _id: new ObjectId(),
+                        ...invite
+                    },
                     shortTitle: `Invitation - ${moment(invite.date).format('DD/MM/YYYY')}`,
                     date: moment(invite.date)
                 }))).sort((a, b) => b.date.unix() - a.date.unix());
                 // Requests to join a team sent by the caller
                 timeline.events = timeline.events.concat(user.teamMembershipRequests.map(request => ({
-                    type: 3,
-                    entry: request,
+                    type: TimeLineEntryType.UserJoinRequest,
+                    entry: {
+                        _id: new ObjectId(),
+                        ...request
+                    },
                     shortTitle: `Join request - ${moment(request.date).format('DD/MM/YYYY')}`,
                     date: moment(request.date)
                 }))).sort((a, b) => b.date.unix() - a.date.unix());
@@ -119,16 +125,22 @@ export function mapUserRoutes(app: Express) {
 
                         // invitations sent by team members to outsiders
                         teamTimeLine.events = teamTimeLine.events.concat(team.invitedUsers.map(invite => ({
-                            type: 2,
-                            entry: invite,
+                            type: TimeLineEntryType.TeamInvite,
+                            entry: {
+                                _id: new ObjectId(),
+                                ...invite
+                            },
                             shortTitle: `Invite - ${moment(invite.date).format('DD/MM/YYYY')}`,
                             date: moment(invite.date)
                         })));
 
                         // Requests by outsiders to join the team
                         teamTimeLine.events = teamTimeLine.events.concat(team.membershipRequests.map(request => ({
-                            type: 3,
-                            entry: request,
+                            type: TimeLineEntryType.TeamJoinRequest,
+                            entry: {
+                                _id: new ObjectId(),
+                                ...request
+                            },
                             shortTitle: `Join request - ${moment(request.date).format('DD/MM/YYYY')}`,
                             date: moment(request.date)
                         })));
@@ -136,7 +148,7 @@ export function mapUserRoutes(app: Express) {
                         const teamDailies = await DailyStore.getDailies(team._id);
                         // daily entries
                         teamTimeLine.events = teamTimeLine.events.concat(teamDailies.map(daily => ({
-                            type: 1,
+                            type: TimeLineEntryType.Daily,
                             team: team,
                             entry: daily,
                             shortTitle: `Daily - ${daily.day.toString().padStart(2, '0')}/${(daily.month + 1).toString().padStart(2, '0')}/${daily.year}`,
