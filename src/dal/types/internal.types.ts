@@ -5,6 +5,14 @@ import { Moment } from "moment";
 /* ---------------------------------------------------------------------------------------------------------------
    Api
    ---------------------------------------------------------------------------------------------------------------*/
+export enum TimeLineEntryType {
+    Daily = 1,
+    TeamInvite = 2,
+    TeamJoinRequest = 3,
+    UserInvite = 4,
+    UserJoinRequest = 5
+};
+
 export class UnforeseenData {
     teamId: ObjectId;
     date: Date;
@@ -24,7 +32,7 @@ export class FeelingData {
 };
 
 export class TimeLineEntry {
-    type: number;
+    type: TimeLineEntryType;
     shortTitle: string;
     date: Moment;
 };
