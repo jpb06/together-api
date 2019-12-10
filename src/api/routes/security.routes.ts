@@ -50,7 +50,7 @@ export function mapSecurityRoutes(app: Express) {
                             avatarName: user.avatarName,
                             teams: user.teams,
                             teamInvites: user.teamInvites,
-                            teamMembershipRequests: user.teamMembershipRequests
+                            teamJoinRequests: user.teamJoinRequests
                         },
                         expirationDate: expirationDate.toISOString()
                     });

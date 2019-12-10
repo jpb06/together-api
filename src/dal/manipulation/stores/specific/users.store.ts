@@ -29,7 +29,7 @@ export abstract class UsersStore {
                 avatarName: avatarName,
                 teams: [],
                 teamInvites: [],
-                teamMembershipRequests: [],
+                teamJoinRequests: [],
                 session: undefined
             }
         );

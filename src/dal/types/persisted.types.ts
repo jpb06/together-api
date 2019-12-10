@@ -7,7 +7,7 @@ export class User {
     _id: ObjectId;
     teams: Array<BareTeam>;
     teamInvites: Array<TeamInvite>;
-    teamMembershipRequests: Array<TeamMembershipRequest>;
+    teamJoinRequests: Array<TeamJoinRequest>;
 
     email: string;
     password: string;
@@ -25,7 +25,7 @@ export class BareTeam {
 export class Team extends BareTeam {
     members: Array<TeamMember>;
     invitedUsers: Array<InvitedUser>;
-    membershipRequests: Array<MembershipRequest>;
+    joinRequests: Array<UserJoinRequest>;
 }
 
 export class Daily {
@@ -96,12 +96,12 @@ export class TeamInvite {
     referrer: TerseUser;
 }
 
-export class MembershipRequest {
+export class UserJoinRequest {
     date: Date;
     user: TerseUser;
 }
 
-export class TeamMembershipRequest {
+export class TeamJoinRequest {
     date: Date;
     team: BareTeam;
 }

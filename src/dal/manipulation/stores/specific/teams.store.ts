@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { Team, TeamMember, InvitedUser, MembershipRequest } from '../../../types/persisted.types';
+import { Team, TeamMember, InvitedUser, UserJoinRequest } from '../../../types/persisted.types';
 import { ObjectId } from 'bson';
 
 export abstract class TeamsStore {
@@ -13,7 +13,7 @@ export abstract class TeamsStore {
             name: name, 
             members: [],
             invitedUsers: [],
-            membershipRequests: []
+            joinRequests: []
         });
         return insertedId;
     }
@@ -72,13 +72,13 @@ export abstract class TeamsStore {
         }
     }
 
-    public static async GetTeamMembershipRequests(
+    public static async GetTeamJoinRequests(
         teamId: ObjectId
-    ): Promise<Array<MembershipRequest> | undefined> {
+    ): Promise<Array<UserJoinRequest> | undefined> {
 
         const team = await this.get(teamId);
         if (team) {
-            return team.membershipRequests;
+            return team.joinRequests;
         }
         else {
             return undefined;
@@ -124,7 +124,7 @@ export abstract class TeamsStore {
 
         if (result.length === 1) {
             result[0].invitedUsers = result[0].invitedUsers.filter(el => !el.invitee._id.equals(user._id));
-            result[0].membershipRequests = result[0].membershipRequests.filter(el => !el.user._id.equals(user._id));
+            result[0].joinRequests = result[0].joinRequests.filter(el => !el.user._id.equals(user._id));
 
             result[0].members.push(user);
             const persistedTeam = await GenericStore.createOrUpdate(this.storeName, { _id: teamId }, result[0]);

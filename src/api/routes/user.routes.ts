@@ -102,7 +102,7 @@ export function mapUserRoutes(app: Express) {
                     date: moment(invite.date)
                 }))).sort((a, b) => b.date.unix() - a.date.unix());
                 // Requests to join a team sent by the caller
-                timeline.events = timeline.events.concat(user.teamMembershipRequests.map(request => ({
+                timeline.events = timeline.events.concat(user.teamJoinRequests.map(request => ({
                     type: TimeLineEntryType.UserJoinRequest,
                     entry: {
                         _id: new ObjectId(),
@@ -135,7 +135,7 @@ export function mapUserRoutes(app: Express) {
                         })));
 
                         // Requests by outsiders to join the team
-                        teamTimeLine.events = teamTimeLine.events.concat(team.membershipRequests.map(request => ({
+                        teamTimeLine.events = teamTimeLine.events.concat(team.joinRequests.map(request => ({
                             type: TimeLineEntryType.TeamJoinRequest,
                             entry: {
                                 _id: new ObjectId(),
@@ -228,7 +228,7 @@ export function mapUserRoutes(app: Express) {
         }
     });
 
-    app.post('/api/user/requestMembership', isAuthenticated, containsTeamName, async (
+    app.post('/api/user/requestToJoinTeam', isAuthenticated, containsTeamName, async (
         req: Request,
         res: Response
     ) => {
@@ -247,11 +247,11 @@ export function mapUserRoutes(app: Express) {
             }
 
             const requestDate = moment().toDate();
-            user.teamMembershipRequests.push({
+            user.teamJoinRequests.push({
                 date: requestDate,
                 team: TeamToBareTeam(team)
             });
-            team.membershipRequests.push({
+            team.joinRequests.push({
                 date: requestDate,
                 user: userToTerseUser(user)
             });
@@ -259,9 +259,9 @@ export function mapUserRoutes(app: Express) {
             const userAlterationresult = await UsersStore.Update(user);
             const teamAlterationresult = await TeamsStore.Update(team);
             if (userAlterationresult && teamAlterationresult) {
-                return res.answer(200, 'Membership request sent');
+                return res.answer(200, 'Join request sent');
             } else {
-                return res.answer(520, 'An error occured while saving the membership request');
+                return res.answer(520, 'An error occured while saving the join request');
             }
         } catch (error) {
             console.log(error);
