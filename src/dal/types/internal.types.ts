@@ -46,8 +46,8 @@ export class TeamTimeLine extends BareTeam {
     events: Array<TeamTimeLineEntry>;
 };
 export class TimeLine {
-    teams: Array<TeamTimeLine>;
-    events: Array<UserTimeLineEntry>;
+    currentTeam?: TeamTimeLine;
+    userEvents: Array<UserTimeLineEntry>;
 };
 
 export class NewUserData {
