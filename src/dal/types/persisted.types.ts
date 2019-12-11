@@ -85,23 +85,27 @@ export class TeamMember extends TerseUser {
 }
 
 export class InvitedUser {
+    _id: ObjectId;
     date: Date;
     referrer: TerseUser;
     invitee: TerseUser;
 }
 
 export class TeamInvite {
+    _id: ObjectId;
     date: Date;
     team: BareTeam;
     referrer: TerseUser;
 }
 
 export class UserJoinRequest {
+    _id: ObjectId;
     date: Date;
     user: TerseUser;
 }
 
 export class TeamJoinRequest {
+    _id: ObjectId;
     date: Date;
     team: BareTeam;
 }

@@ -94,20 +94,14 @@ export function mapUserRoutes(app: Express) {
                 // Invitations sent to the caller
                 timeline.userEvents = timeline.userEvents.concat(user.teamInvites.map(invite => ({
                     type: TimeLineEntryType.UserInvite,
-                    entry: {
-                        _id: new ObjectId(),
-                        ...invite
-                    },
+                    entry: invite,
                     shortTitle: `Invitation - ${moment(invite.date).format('DD/MM/YYYY')}`,
                     date: moment(invite.date)
-                }))).sort((a, b) => b.date.unix() - a.date.unix());
+                })));
                 // Requests to join a team sent by the caller
                 timeline.userEvents = timeline.userEvents.concat(user.teamJoinRequests.map(request => ({
                     type: TimeLineEntryType.UserJoinRequest,
-                    entry: {
-                        _id: new ObjectId(),
-                        ...request
-                    },
+                    entry: request,
                     shortTitle: `Join request - ${moment(request.date).format('DD/MM/YYYY')}`,
                     date: moment(request.date)
                 }))).sort((a, b) => b.date.unix() - a.date.unix());
@@ -123,10 +117,7 @@ export function mapUserRoutes(app: Express) {
                     // invitations sent by team members to outsiders
                     teamTimeLine.events = teamTimeLine.events.concat(team.invitedUsers.map(invite => ({
                         type: TimeLineEntryType.TeamInvite,
-                        entry: {
-                            _id: new ObjectId(),
-                            ...invite
-                        },
+                        entry: invite,
                         shortTitle: `Invite - ${moment(invite.date).format('DD/MM/YYYY')}`,
                         date: moment(invite.date)
                     })));
@@ -134,10 +125,7 @@ export function mapUserRoutes(app: Express) {
                     // Requests by outsiders to join the team
                     teamTimeLine.events = teamTimeLine.events.concat(team.joinRequests.map(request => ({
                         type: TimeLineEntryType.TeamJoinRequest,
-                        entry: {
-                            _id: new ObjectId(),
-                            ...request
-                        },
+                        entry: request,
                         shortTitle: `Join request - ${moment(request.date).format('DD/MM/YYYY')}`,
                         date: moment(request.date)
                     })));
@@ -195,15 +183,18 @@ export function mapUserRoutes(app: Express) {
                 return res.answer(520, 'This user has already been added to the team');
             }
 
+            const requestId = new ObjectId();
             const requestDate = moment().toDate();
             const terseRefered = userToTerseUser(referrer);
             const terseTargetUser = userToTerseUser(targetUser);
             team.invitedUsers.push({
+                _id: requestId,
                 date: requestDate,
                 referrer: terseRefered,
                 invitee: terseTargetUser
             });
             targetUser.teamInvites.push({
+                _id: requestId,
                 date: requestDate,
                 referrer: terseRefered,
                 team: TeamToBareTeam(team)
@@ -240,12 +231,15 @@ export function mapUserRoutes(app: Express) {
                 return res.answer(520, 'This team does not exist');
             }
 
+            const requestId = new ObjectId();
             const requestDate = moment().toDate();
             user.teamJoinRequests.push({
+                _id: requestId,
                 date: requestDate,
                 team: TeamToBareTeam(team)
             });
             team.joinRequests.push({
+                _id: requestId,
                 date: requestDate,
                 user: userToTerseUser(user)
             });
