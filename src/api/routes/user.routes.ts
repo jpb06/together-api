@@ -77,15 +77,15 @@ export function mapUserRoutes(app: Express) {
         }
     });
 
-    app.post('/api/user/timeline', isAuthenticated, containsUserId, containsTeamId, async (
+    app.post('/api/user/timeline', isAuthenticated, containsUserEmail, containsTeamId, async (
         req: Request,
         res: Response
     ) => {
         try {
-            const userId = <ObjectId>res.locals.userId;
+            const userEmail = <string>res.locals.userEmail;
             const teamId = <ObjectId>res.locals.teamId;
 
-            const user = await CacheService.GetUserById(userId);
+            const user = await CacheService.GetUserByEmail(userEmail);
             if (user) {
                 let timeline: TimeLine = {
                     userEvents: []
