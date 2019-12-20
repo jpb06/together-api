@@ -78,6 +78,7 @@ export class TerseUser {
     lastName: string;
     firstName: string;
     avatarName: string;
+    email: string;
 }
 
 export class TeamMember extends TerseUser {
