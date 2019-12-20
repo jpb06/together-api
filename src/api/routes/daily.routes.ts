@@ -4,9 +4,9 @@ import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
 import { CacheService } from "../../business/cache.service";
 import { UnforeseenData, DailyPredicate, SubjectData, FeelingData } from "../../dal/types/internal.types";
 import {
-    containsTicket, containsDailyPredicate, containsDurationIndicator, containsAssignee,
+    containsTicket, containsDailyPredicate, containsDurationIndicator,
     containsSubject, containsSubjectId,
-    containsFeeling, containsFeelingId
+    containsFeeling, containsFeelingId, containsAssigneeEmail
 } from "../middleware/requests.validation.middleware";
 import { ObjectId } from "bson";
 
@@ -86,16 +86,16 @@ export function mapDailyRoutes(app: Express) {
         }
     });
 
-    app.post('/api/daily/done/add', isAuthenticated, containsTicket, containsAssignee, async (
+    app.post('/api/daily/done/add', isAuthenticated, containsTicket, containsAssigneeEmail, async (
         req: Request,
         res: Response
     ) => {
         try {
             const ticket = <UnforeseenData>res.locals.ticket;
-            const assigneeId = <ObjectId>res.locals.assigneeId;
+            const assigneeEmail = <string>res.locals.assigneeEmail;
 
             const creator = await CacheService.GetUserByEmail(res.locals.email);
-            const assignee = await CacheService.GetUserById(assigneeId);
+            const assignee = await CacheService.GetUserByEmail(assigneeEmail);
             if (creator && assignee) {
                 const result = await DailyStore.addDoneTicket(ticket.date, ticket.teamId, creator, assignee, ticket.ticketName);
                 if (result) {
