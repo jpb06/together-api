@@ -29,26 +29,6 @@ export abstract class CacheService {
         }
     }
 
-    public static async GetUserById(
-        id: ObjectId
-    ): Promise<User | undefined> {
-        const key = id.toHexString();
-
-        let user = this.cachedUsers[key];
-        if (user) {
-            return user;
-        } else {
-            const persistedUser = await UsersStore.getById(id);
-            if (persistedUser) {
-
-                this.cachedUsers[key] = persistedUser;
-                return persistedUser;
-            } else {
-                return undefined;
-            }
-        }
-    }
-
     public static async SetUser(
         email: string,
         user: User
