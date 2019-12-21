@@ -30,9 +30,8 @@ export abstract class CacheService {
     }
 
     public static async SetUser(
-        email: string,
         user: User
     ): Promise<void> {
-        this.cachedUsers[email] = user;
+        this.cachedUsers[user.email] = user;
     }
 }
