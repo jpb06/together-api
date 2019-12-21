@@ -269,3 +269,21 @@ export async function containsTeamName(
 
     next();
 }
+
+export async function containsInviteId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    if (req.body.inviteId === undefined ||
+        req.body.inviteId === '' ||
+        !containsHex(req.body.inviteId, 24)) {
+        return res.answer(400, 'Expecting an invite id');
+    }
+
+    const inviteId = ObjectId.createFromHexString(req.body.inviteId);
+
+    res.locals.inviteId = inviteId;
+
+    next();
+}

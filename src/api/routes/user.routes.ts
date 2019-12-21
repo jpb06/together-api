@@ -1,6 +1,6 @@
 ﻿import { Express, Request, Response } from "express-serve-static-core";
 import { isAuthenticated } from "../middleware/permissions.validation.middleware";
-import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, containsTeamName } from "../middleware/requests.validation.middleware";
+import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, containsTeamName, containsInviteId } from "../middleware/requests.validation.middleware";
 import { ObjectId } from "bson";
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
@@ -239,4 +239,51 @@ export function mapUserRoutes(app: Express) {
         }
     });
 
+    app.post('/api/user/acceptTeamInvite', isAuthenticated, containsInviteId, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const userEmail = <string>res.locals.email;
+            const inviteId = <string>res.locals.inviteId;
+
+            const user = await CacheService.GetUserByEmail(userEmail);
+            if (!user) {
+                return res.answer(520, 'Unable to get the current user');
+            }
+
+            const matchingInvites = user.teamInvites.filter(el => el._id.equals(inviteId));
+            if (matchingInvites.length !== 1) {
+                return res.answer(520, 'Unable to find the team join invite');
+            }
+
+            const team = await TeamsStore.get(matchingInvites[0].team._id);
+            if (!team) {
+                return res.answer(520, 'Unable to find the targeted team');
+            }
+
+            user.teamInvites = user.teamInvites.filter(el => !el._id.equals(inviteId));
+            user.teams.push(teamToBareTeam(team));
+
+            const userUpdateResult = await UsersStore.Update(user);
+            if (!userUpdateResult) {
+                return res.answer(520, 'Unable to update the user');
+            }
+
+            team.members.push({
+                status: 'member',
+                ...userToTerseUser(user)
+            });
+            team.invitedUsers = team.invitedUsers.filter(el => !el._id.equals(matchingInvites[0]._id));
+
+            const teamUpdateResult = await TeamsStore.Update(team);
+            if (!teamUpdateResult) {
+                return res.answer(520, 'Unable to update the targeted team');
+            }
+
+        } catch (error) {
+            console.log(error);
+            return res.answer(500, error.message);
+        }
+    });
 }
