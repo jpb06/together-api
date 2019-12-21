@@ -35,6 +35,7 @@ export function mapUserRoutes(app: Express) {
                     newUser.password);
 
                 if (persistedUser) {
+                    await CacheService.SetUser(persistedUser);
                     return res.status(200).json({
                         status: 200,
                         user: {
@@ -185,6 +186,7 @@ export function mapUserRoutes(app: Express) {
             const userAlterationresult = await UsersStore.Update(targetUser);
             const teamAlterationresult = await TeamsStore.Update(team);
             if (userAlterationresult && teamAlterationresult) {
+                await CacheService.SetUser(targetUser);
                 return res.populate(terseTargetUser);
             } else {
                 return res.answer(520, 'An error occured while saving the team invitation');
@@ -229,6 +231,7 @@ export function mapUserRoutes(app: Express) {
             const userAlterationresult = await UsersStore.Update(user);
             const teamAlterationresult = await TeamsStore.Update(team);
             if (userAlterationresult && teamAlterationresult) {
+                await CacheService.SetUser(user);
                 return res.answer(200, 'Join request sent');
             } else {
                 return res.answer(520, 'An error occured while saving the join request');
@@ -267,6 +270,7 @@ export function mapUserRoutes(app: Express) {
 
             const userUpdateResult = await UsersStore.Update(user);
             if (!userUpdateResult) {
+                await CacheService.SetUser(user);
                 return res.answer(520, 'Unable to update the user');
             }
 

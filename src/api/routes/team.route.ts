@@ -34,6 +34,7 @@ export function mapTeamRoutes(app: Express) {
                         const userAlterationResult = await UsersStore.addToTeam(creator.email, teamId);
 
                         if (teamAlterationResult && userAlterationResult) {
+                            await CacheService.SetUser(creator);
                             res.populate(teamId);
                         } else {
                             res.answer(500, `Unable to add user ${creator.email} to team ${teamName}`);

@@ -39,6 +39,7 @@ export function mapSecurityRoutes(app: Express) {
 
                 let result = await UsersStore.Update(user);
                 if (result) {
+                    await CacheService.SetUser(user);
                     return res.status(200).json({
                         status: 200,
                         token: jwtBearerToken,
