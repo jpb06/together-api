@@ -45,19 +45,18 @@ export async function containsTicket(
     next();
 };
 
-export async function containsAssignee(
+export async function containsAssigneeEmail(
     req: Request,
     res: Response,
     next: NextFunction
 ) {
-    if (req.body.assigneeId === undefined
-     || req.body.assigneeId === ''
-     || !containsHex(req.body.assigneeId, 24)) {
-        return res.answer(400, 'Expecting an assignee id');
+    if (req.body.assigneeEmail === undefined
+     || req.body.assigneeEmail === ''
+     || !req.body.assigneeEmail.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
+        return res.answer(400, "Expecting the assignee's email");
     }
 
-    const assigneeId = ObjectId.createFromHexString(req.body.assigneeId);
-    res.locals.assigneeId = assigneeId;
+    res.locals.assigneeEmail = req.body.assigneeEmail;
 
     next();
 };

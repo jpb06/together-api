@@ -9,7 +9,8 @@ export function userToTerseUser(
         _id: user._id,
         lastName: user.lastName,
         firstName: user.firstName,
-        avatarName: user.avatarName
+        avatarName: user.avatarName,
+        email: user.email
     };
 };
 
