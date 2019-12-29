@@ -1,5 +1,5 @@
 ﻿import { ObjectId } from "bson";
-import { Daily, BareTeam, TeamJoinRequest, TeamInvite, InvitedUser, UserJoinRequest } from "./persisted.types";
+import { Daily, BareTeam, TeamJoinRequest, TeamInvite, InvitedUser, UserJoinRequest, Team } from "./persisted.types";
 import { Moment } from "moment";
 
 /* ---------------------------------------------------------------------------------------------------------------
@@ -56,3 +56,7 @@ export class NewUserData {
     email: string;
     password: string;
 };
+
+export class TeamWithLastActivity extends Team {
+    lastActivity: string;
+}
