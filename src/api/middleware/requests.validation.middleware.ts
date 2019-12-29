@@ -287,3 +287,13 @@ export async function containsInviteId(
 
     next();
 }
+
+export async function ensureFetchLastActivity(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    res.locals.fetchLastActivity = req.body.fetchLastActivity === 'true' || req.body.fetchLastActivity === true;
+
+    next();
+}
