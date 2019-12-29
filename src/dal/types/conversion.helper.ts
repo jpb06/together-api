@@ -2,6 +2,22 @@ import { TerseUser, User, BareTeam, Team, TeamInvite, TeamJoinRequest, InvitedUs
 import { UserTimeLineEntry, TimeLineEntryType, TeamTimeLineEntry } from "./internal.types";
 import moment = require("moment");
 
+export function splittedDateToMoment(
+    year: number,
+    month: number,
+    day: number
+) {
+    return moment.utc(`${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+}
+
+export function splittedDateToString(
+    year: number,
+    month: number,
+    day: number
+) {
+    return `${day.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
+}
+
 export function userToTerseUser(
     user: User
 ): TerseUser {
@@ -73,7 +89,7 @@ export function dailyToTeamTimeLineEntry(
     return {
         type: TimeLineEntryType.Daily,
         entry: daily,
-        shortTitle: `Daily - ${daily.day.toString().padStart(2, '0')}/${(daily.month + 1).toString().padStart(2, '0')}/${daily.year}`,
-        date: moment.utc(`${daily.year}-${(daily.month + 1).toString().padStart(2, '0')}-${daily.day.toString().padStart(2, '0')}`)
+        shortTitle: `Daily - ${splittedDateToString(daily.year, daily.month, daily.day)}`,
+        date: splittedDateToMoment(daily.year, daily.month, daily.day)
     };
 };
