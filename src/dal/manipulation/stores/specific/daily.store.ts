@@ -297,4 +297,17 @@ export abstract class DailyStore {
 
         return matches;
     }
+
+    public static async getTeamsDailies(
+        teamsIds: Array<ObjectId>,
+    ): Promise<Array<Daily>> {
+
+        let matches = await GenericStore.getBy(
+            this.storeName,
+            { teamId: { $in: teamsIds } },
+            {}
+        ) as Array<Daily>;
+
+        return matches;
+    }
 }
