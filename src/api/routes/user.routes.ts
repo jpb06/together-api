@@ -1,14 +1,24 @@
 ﻿import { Express, Request, Response } from "express-serve-static-core";
 import { isAuthenticated } from "../middleware/permissions.validation.middleware";
-import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, containsTeamName, containsInviteId } from "../middleware/requests.validation.middleware";
+import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, containsTeamName, containsInviteId, ensureFetchLastActivity } from "../middleware/requests.validation.middleware";
 import { ObjectId } from "bson";
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
-import { NewUserData, TimeLine, TimeLineEntryType, TeamTimeLine } from "../../dal/types/internal.types";
+import { NewUserData, TimeLine, TimeLineEntryType, TeamTimeLine, TeamWithLastActivity } from "../../dal/types/internal.types";
 import moment = require("moment");
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 import { CacheService } from "../../business/cache.service";
-import { userToTerseUser, teamToBareTeam, teamInviteToUserTimeLineEntry, teamJoinRequestToUserTimeLineEntry, invitedUserToTeamTimeLineEntry, userJoinRequestToTeamTimeLineEntry, dailyToTeamTimeLineEntry } from "../../dal/types/conversion.helper";
+import {
+    userToTerseUser,
+    teamToBareTeam,
+    teamInviteToUserTimeLineEntry,
+    teamJoinRequestToUserTimeLineEntry,
+    invitedUserToTeamTimeLineEntry,
+    userJoinRequestToTeamTimeLineEntry,
+    dailyToTeamTimeLineEntry,
+    splittedDateToMoment,
+    splittedDateToString
+} from "../../dal/types/conversion.helper";
 import { TerseUser } from "../../dal/types/persisted.types";
 
 export function mapUserRoutes(app: Express) {
@@ -59,15 +69,30 @@ export function mapUserRoutes(app: Express) {
         }
     });
 
-    app.post('/api/user/teams', isAuthenticated, containsUserId, async (
+    app.post('/api/user/teams', isAuthenticated, containsUserId, ensureFetchLastActivity, async (
         req: Request,
         res: Response
     ) => {
         try {
             const userId = <ObjectId>res.locals.userId;
+            const fetchLastActivity = <boolean>res.locals.fetchLastActivity;
 
-            const userTeams = await TeamsStore.getUserTeams(userId);
+            const userTeams = await TeamsStore.getUserTeams(userId) as Array<TeamWithLastActivity>;
             if (userTeams) {
+                if (fetchLastActivity) {
+                    const dailies = await DailyStore.getTeamsDailies(userTeams.map(el => el._id));
+                    const sorted = dailies.sort((a, b) =>
+                        splittedDateToMoment(b.year, b.month, b.day).unix() -
+                        splittedDateToMoment(a.year, a.month, a.day).unix());
+
+                    for (const team of userTeams) {
+                        const teamEvents = sorted.filter(el => el.teamId.equals(team._id));
+                        team.lastActivity = teamEvents.length > 0
+                            ? splittedDateToString(teamEvents[0].year, teamEvents[0].month, teamEvents[0].day)
+                            : 'None';
+                    }
+                }
+                
                 res.populate(userTeams);
             } else {
                 res.answer(500, 'Unable to get user teams');
@@ -284,6 +309,53 @@ export function mapUserRoutes(app: Express) {
             if (!teamUpdateResult) {
                 return res.answer(520, 'Unable to update the targeted team');
             }
+
+            return res.answer(200, "Added to team");
+
+        } catch (error) {
+            console.log(error);
+            return res.answer(500, error.message);
+        }
+    });
+
+    app.post('/api/user/declineTeamInvite', isAuthenticated, containsInviteId, async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const userEmail = <string>res.locals.email;
+            const inviteId = <string>res.locals.inviteId;
+
+            const user = await CacheService.GetUserByEmail(userEmail);
+            if (!user) {
+                return res.answer(520, 'Unable to get the current user');
+            }
+
+            const matchingInvites = user.teamInvites.filter(el => el._id.equals(inviteId));
+            if (matchingInvites.length !== 1) {
+                return res.answer(520, 'Unable to find the team join invite');
+            }
+
+            const team = await TeamsStore.get(matchingInvites[0].team._id);
+            if (!team) {
+                return res.answer(520, 'Unable to find the targeted team');
+            }
+
+            user.teamInvites = user.teamInvites.filter(el => !el._id.equals(inviteId));
+            team.invitedUsers = team.invitedUsers.filter(el => !el._id.equals(matchingInvites[0]._id));
+
+            const userUpdateResult = await UsersStore.Update(user);
+            if (!userUpdateResult) {
+                await CacheService.SetUser(user);
+                return res.answer(520, 'Unable to update the user');
+            }
+
+            const teamUpdateResult = await TeamsStore.Update(team);
+            if (!teamUpdateResult) {
+                return res.answer(520, 'Unable to update the targeted team');
+            }
+
+            return res.answer(200, "Invite declined");
 
         } catch (error) {
             console.log(error);
