@@ -17,7 +17,8 @@ import {
     userJoinRequestToTeamTimeLineEntry,
     dailyToTeamTimeLineEntry,
     splittedDateToMoment,
-    splittedDateToString
+    splittedDateToString,
+    teamMemberToTeamTimeLineEntry
 } from "../../dal/types/conversion.helper";
 import { TerseUser } from "../../dal/types/persisted.types";
 
@@ -147,6 +148,7 @@ export function mapUserRoutes(app: Express) {
                         .concat(teamJoinRequests)
                         // daily entries
                         .concat(teamDailies.map(daily => dailyToTeamTimeLineEntry(daily)))
+                        .concat(team.members.map(user => teamMemberToTeamTimeLineEntry(user)))
                         .sort((a, b) => b.date.unix() - a.date.unix())
 
                     timeline.currentTeam = teamTimeLine;
@@ -301,7 +303,8 @@ export function mapUserRoutes(app: Express) {
 
             team.members.push({
                 status: 'member',
-                ...userToTerseUser(user)
+                ...userToTerseUser(user),
+                joinDate: moment().toDate()
             });
             team.invitedUsers = team.invitedUsers.filter(el => !el._id.equals(matchingInvites[0]._id));
 

@@ -1,4 +1,4 @@
-import { TerseUser, User, BareTeam, Team, TeamInvite, TeamJoinRequest, InvitedUser, UserJoinRequest, Daily } from "./persisted.types";
+import { TerseUser, User, BareTeam, Team, TeamInvite, TeamJoinRequest, InvitedUser, UserJoinRequest, Daily, TeamMember } from "./persisted.types";
 import { UserTimeLineEntry, TimeLineEntryType, TeamTimeLineEntry } from "./internal.types";
 import moment = require("moment");
 
@@ -91,5 +91,18 @@ export function dailyToTeamTimeLineEntry(
         entry: daily,
         shortTitle: `Daily - ${splittedDateToString(daily.year, daily.month, daily.day)}`,
         date: splittedDateToMoment(daily.year, daily.month, daily.day)
+    };
+};
+
+export function teamMemberToTeamTimeLineEntry(
+    user: TeamMember
+): TeamTimeLineEntry {
+    return {
+        type: TimeLineEntryType.TeamMemberJoinNotice,
+        shortTitle: user.status === 'creator'
+            ? `The adventure begins - ${moment(user.joinDate).format('DD/MM/YYYY')}`
+            : `New member - ${moment(user.joinDate).format('DD/MM/YYYY')}`,
+        date: moment(user.joinDate),
+        entry: user
     };
 };

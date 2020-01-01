@@ -1,5 +1,5 @@
 ﻿import { ObjectId } from "bson";
-import { Daily, BareTeam, TeamJoinRequest, TeamInvite, InvitedUser, UserJoinRequest, Team } from "./persisted.types";
+import { Daily, BareTeam, TeamJoinRequest, TeamInvite, InvitedUser, UserJoinRequest, Team, TerseUser, TeamMember } from "./persisted.types";
 import { Moment } from "moment";
 
 /* ---------------------------------------------------------------------------------------------------------------
@@ -10,7 +10,8 @@ export enum TimeLineEntryType {
     TeamInvite = 2,
     TeamJoinRequest = 3,
     UserInvite = 4,
-    UserJoinRequest = 5
+    UserJoinRequest = 5,
+    TeamMemberJoinNotice = 6
 };
 
 export class UnforeseenData {
@@ -37,7 +38,7 @@ export class TimeLineEntry {
     date: Moment;
 };
 export class TeamTimeLineEntry extends TimeLineEntry {
-    entry: Daily | UserJoinRequest | InvitedUser;
+    entry: Daily | UserJoinRequest | InvitedUser | TeamMember;
 };
 export class UserTimeLineEntry extends TimeLineEntry {
     entry: TeamInvite | TeamJoinRequest;

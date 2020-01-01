@@ -5,6 +5,7 @@ import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { CacheService } from "../../business/cache.service";
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 import { userToTerseUser } from "../../dal/types/conversion.helper";
+import moment = require("moment");
 
 export function mapTeamRoutes(app: Express) {
 
@@ -29,7 +30,8 @@ export function mapTeamRoutes(app: Express) {
                     if (creator) {
                         const teamAlterationResult = await TeamsStore.addUserToTeam(teamId, {
                             ...userToTerseUser(creator),
-                            status: 'creator'
+                            status: 'creator',
+                            joinDate: moment().toDate()
                         });
                         const userAlterationResult = await UsersStore.addToTeam(creator.email, teamId);
 

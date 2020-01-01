@@ -83,6 +83,7 @@ export class TerseUser {
 
 export class TeamMember extends TerseUser {
     status: string;
+    joinDate: Date;
 }
 
 export class InvitedUser {
