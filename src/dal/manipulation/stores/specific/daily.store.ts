@@ -25,13 +25,13 @@ export abstract class DailyStore {
         teamId: ObjectId,
     ): Promise<Daily | undefined> {
 
-        let matches = await GenericStore.getBy(
+        const matches = await GenericStore.getBy(
             this.storeName, this.searchCriteria(date, teamId), { "created_at": 1 }
         ) as Array<Daily>;
 
         if (matches.length === 0) {
 
-            let daily = {
+            const daily = {
                 teamId: teamId,
                 day: date.getDate(),
                 month: date.getMonth(),
@@ -43,7 +43,7 @@ export abstract class DailyStore {
                 feelings: []
             };
 
-            let insertedId = await GenericStore.create(this.storeName, daily);
+            const insertedId = await GenericStore.create(this.storeName, daily);
             if (insertedId) {
                 return { ...daily, _id: insertedId };
             } else {
@@ -58,9 +58,9 @@ export abstract class DailyStore {
         date: Date,
         teamId: ObjectId,
         durationIndicator: string
-    ) : Promise<boolean> {
+    ): Promise<boolean> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily) {
             daily.durationIndicator = durationIndicator;
 
@@ -84,7 +84,7 @@ export abstract class DailyStore {
         ticketName: string
     ): Promise<boolean> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily && daily.unforeseenTickets.filter(el => el.name === ticketName).length === 0) {
 
             daily.unforeseenTickets.push({
@@ -111,7 +111,7 @@ export abstract class DailyStore {
         ticketName: string
     ): Promise<boolean> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily && daily.doneTickets.filter(el => el.name === ticketName).length === 0) {
 
             daily.doneTickets.push({
@@ -137,7 +137,7 @@ export abstract class DailyStore {
         name: string
     ): Promise<boolean> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily) {
 
             daily.unforeseenTickets = daily.unforeseenTickets.filter(el => el.name !== name);
@@ -160,7 +160,7 @@ export abstract class DailyStore {
         name: string
     ): Promise<boolean> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily) {
 
             daily.doneTickets = daily.doneTickets.filter(el => el.name !== name);
@@ -185,7 +185,7 @@ export abstract class DailyStore {
         description: string
     ): Promise<ObjectId | undefined> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily) {
 
             const subjectId = new ObjectId();
@@ -214,7 +214,7 @@ export abstract class DailyStore {
         id: ObjectId
     ): Promise<boolean> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily) {
 
             daily.subjects = daily.subjects.filter(el => !el.id.equals(id));
@@ -239,7 +239,7 @@ export abstract class DailyStore {
         comment: string
     ): Promise<ObjectId | undefined> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily) {
 
             const feelingId = new ObjectId();
@@ -268,7 +268,7 @@ export abstract class DailyStore {
         id: ObjectId
     ): Promise<boolean> {
 
-        let daily = await this.getCreateDaily(date, teamId);
+        const daily = await this.getCreateDaily(date, teamId);
         if (daily) {
 
             daily.feelings = daily.feelings.filter(el => !el.id.equals(id));
@@ -289,7 +289,7 @@ export abstract class DailyStore {
         teamId: ObjectId,
     ): Promise<Array<Daily>> {
 
-        let matches = await GenericStore.getBy(
+        const matches = await GenericStore.getBy(
             this.storeName,
             { teamId: teamId },
             {}
@@ -302,7 +302,7 @@ export abstract class DailyStore {
         teamsIds: Array<ObjectId>,
     ): Promise<Array<Daily>> {
 
-        let matches = await GenericStore.getBy(
+        const matches = await GenericStore.getBy(
             this.storeName,
             { teamId: { $in: teamsIds } },
             {}

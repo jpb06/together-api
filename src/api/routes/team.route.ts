@@ -14,8 +14,8 @@ export function mapTeamRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const teamName = <string>res.locals.teamName;
-            const creatorEmail = <string>res.locals.email;
+            const teamName = res.locals.teamName as string;
+            const creatorEmail = res.locals.email as string;
 
             const isExisting = await TeamsStore.exists(teamName);
             if (isExisting) {

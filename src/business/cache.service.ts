@@ -1,6 +1,5 @@
 ﻿import { User } from '../dal/types/persisted.types';
 import { UsersStore } from '../dal/manipulation/stores/specific/users.store';
-import { ObjectId } from 'bson';
 
 interface Dictionary<T> {
     [Key: string]: T;
@@ -14,7 +13,7 @@ export abstract class CacheService {
         email: string
     ): Promise<User | undefined> {
 
-        let user = this.cachedUsers[email];
+        const user = this.cachedUsers[email];
         if (user) {
             return user;
         } else {

@@ -37,7 +37,7 @@ export function mapSecurityRoutes(app: Express) {
                     expirationDate: expirationDate.toDate()
                 };
 
-                let result = await UsersStore.Update(user);
+                const result = await UsersStore.Update(user);
                 if (result) {
                     await CacheService.SetUser(user);
                     return res.status(200).json({

@@ -17,7 +17,7 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const predicate = <DailyPredicate>res.locals.dailyPredicate;
+            const predicate = res.locals.dailyPredicate as DailyPredicate;
 
             const result = await DailyStore.getCreateDaily(predicate.date, predicate.teamId);
             res.populate(result);
@@ -32,7 +32,7 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const predicate = <DailyPredicate>res.locals.dailyPredicate;
+            const predicate = res.locals.dailyPredicate as DailyPredicate;
 
             const result = await DailyStore.setDuration(predicate.date, predicate.teamId, req.body.durationIndicator);
             if (result) {
@@ -50,7 +50,7 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const ticket = <UnforeseenData>res.locals.ticket;
+            const ticket = res.locals.ticket as UnforeseenData;
 
             const creator = await CacheService.GetUserByEmail(res.locals.email);
             if (creator) {
@@ -73,7 +73,7 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const ticket = <UnforeseenData>res.locals.ticket;
+            const ticket = res.locals.ticket as UnforeseenData;
 
             const result = await DailyStore.removeUnforeseenTicket(ticket.date, ticket.teamId, ticket.ticketName);
             if (result) {
@@ -91,8 +91,8 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const ticket = <UnforeseenData>res.locals.ticket;
-            const assigneeEmail = <string>res.locals.assigneeEmail;
+            const ticket = res.locals.ticket as UnforeseenData;
+            const assigneeEmail = res.locals.assigneeEmail as string;
 
             const creator = await CacheService.GetUserByEmail(res.locals.email);
             const assignee = await CacheService.GetUserByEmail(assigneeEmail);
@@ -120,7 +120,7 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const ticket = <UnforeseenData>res.locals.ticket;
+            const ticket = res.locals.ticket as UnforeseenData;
 
             const result = await DailyStore.removeDoneTicket(ticket.date, ticket.teamId, ticket.ticketName);
             if (result) {
@@ -138,8 +138,8 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const predicate = <DailyPredicate>res.locals.dailyPredicate;
-            const subject = <SubjectData>res.locals.subject;
+            const predicate = res.locals.dailyPredicate as DailyPredicate;
+            const subject = res.locals.subject as SubjectData;
 
             const creator = await CacheService.GetUserByEmail(res.locals.email);
             if (creator) {
@@ -162,8 +162,8 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const predicate = <DailyPredicate>res.locals.dailyPredicate;
-            const subjectId = <ObjectId>res.locals.subjectId;
+            const predicate = res.locals.dailyPredicate as DailyPredicate;
+            const subjectId = res.locals.subjectId as ObjectId;
 
             const result = await DailyStore.removeSubject(predicate.date, predicate.teamId, subjectId);
             if (result) {
@@ -181,8 +181,8 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const predicate = <DailyPredicate>res.locals.dailyPredicate;
-            const feeling = <FeelingData>res.locals.feeling;
+            const predicate = res.locals.dailyPredicate as DailyPredicate;
+            const feeling = res.locals.feeling as FeelingData;
 
             const creator = await CacheService.GetUserByEmail(res.locals.email);
             if (creator) {
@@ -205,8 +205,8 @@ export function mapDailyRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const predicate = <DailyPredicate>res.locals.dailyPredicate;
-            const feelingId = <ObjectId>res.locals.feelingId;
+            const predicate = res.locals.dailyPredicate as DailyPredicate;
+            const feelingId = res.locals.feelingId as ObjectId;
 
             const result = await DailyStore.removeFeeling(predicate.date, predicate.teamId, feelingId);
             if (result) {
