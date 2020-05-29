@@ -4,7 +4,7 @@ import { containsUserId, containsNewUser, containsTeamId, containsUserEmail, con
 import { ObjectId } from "bson";
 import { TeamsStore } from "../../dal/manipulation/stores/specific/teams.store";
 import { DailyStore } from "../../dal/manipulation/stores/specific/daily.store";
-import { NewUserData, TimeLine, TimeLineEntryType, TeamTimeLine, TeamWithLastActivity } from "../../dal/types/internal.types";
+import { NewUserData, TimeLine, TeamTimeLine, TeamWithLastActivity } from "../../dal/types/internal.types";
 import moment = require("moment");
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 import { CacheService } from "../../business/cache.service";
@@ -20,7 +20,6 @@ import {
     splittedDateToString,
     teamMemberToTeamTimeLineEntry
 } from "../../dal/types/conversion.helper";
-import { TerseUser } from "../../dal/types/persisted.types";
 
 export function mapUserRoutes(app: Express) {
 
@@ -29,7 +28,7 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const newUser = <NewUserData>res.locals.newUser;
+            const newUser = res.locals.newUser as NewUserData;
 
             const existingUser = await CacheService.GetUserByEmail(newUser.email);
             if (existingUser) {
@@ -75,8 +74,8 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const userId = <ObjectId>res.locals.userId;
-            const fetchLastActivity = <boolean>res.locals.fetchLastActivity;
+            const userId = res.locals.userId as ObjectId;
+            const fetchLastActivity = res.locals.fetchLastActivity as boolean;
 
             const userTeams = await TeamsStore.getUserTeams(userId) as Array<TeamWithLastActivity>;
             if (userTeams) {
@@ -109,12 +108,12 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const userEmail = <string>res.locals.email;
-            const teamId = <ObjectId>res.locals.teamId;
+            const userEmail = res.locals.email as string;
+            const teamId = res.locals.teamId as ObjectId;
 
             const user = await CacheService.GetUserByEmail(userEmail);
             if (user) {
-                let timeline: TimeLine = {
+                const timeline: TimeLine = {
                     userEvents: []
                 };
 
@@ -169,9 +168,9 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const referrerEmail = <string>res.locals.email; 
-            const targetUserEmail = <string>res.locals.userEmail;
-            const teamId = <ObjectId>res.locals.teamId;
+            const referrerEmail = res.locals.email as string; 
+            const targetUserEmail = res.locals.userEmail as string;
+            const teamId = res.locals.teamId as ObjectId;
 
             const referrer = await CacheService.GetUserByEmail(referrerEmail);
             if (!referrer) {
@@ -188,7 +187,7 @@ export function mapUserRoutes(app: Express) {
                 return res.answer(520, 'Unable to locate the selected team');
             }
 
-            if (team.invitedUsers.find(el => (<TerseUser>el.invitee)._id.equals(targetUser._id))
+            if (team.invitedUsers.find(el => el.invitee._id.equals(targetUser._id))
             ||  team.members.find(el => el._id.equals(targetUser._id))) {
                 return res.answer(520, 'This user has already been added to the team');
             }
@@ -229,8 +228,8 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const userEmail = <string>res.locals.email;
-            const teamName = <string>res.locals.teamName;
+            const userEmail = res.locals.email as string;
+            const teamName = res.locals.teamName as string;
 
             const user = await CacheService.GetUserByEmail(userEmail);
             if (!user) {
@@ -274,8 +273,8 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const userEmail = <string>res.locals.email;
-            const inviteId = <string>res.locals.inviteId;
+            const userEmail = res.locals.email as string;
+            const inviteId = res.locals.inviteId as string;
 
             const user = await CacheService.GetUserByEmail(userEmail);
             if (!user) {
@@ -326,8 +325,8 @@ export function mapUserRoutes(app: Express) {
         res: Response
     ) => {
         try {
-            const userEmail = <string>res.locals.email;
-            const inviteId = <string>res.locals.inviteId;
+            const userEmail = res.locals.email as string;
+            const inviteId = res.locals.inviteId as string;
 
             const user = await CacheService.GetUserByEmail(userEmail);
             if (!user) {

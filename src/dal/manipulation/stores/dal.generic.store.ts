@@ -31,7 +31,7 @@ export abstract class GenericStore {
 
             const result = await collection.insertOne(value);
             if (result.insertedCount === 1)
-                return <ObjectId>result.insertedId;
+                return result.insertedId as ObjectId;
             else
                 return undefined;
 
@@ -140,7 +140,7 @@ export abstract class GenericStore {
 
             if (count) result = result.limit(count);
 
-            return result.toArray();
+            return await result.toArray();
         } finally {
             await client.close();
         }

@@ -1,6 +1,6 @@
 ﻿import * as debug from 'debug';
 import * as express from 'express';
-import { Express, Response } from "express-serve-static-core";
+import { Express } from "express-serve-static-core";
 import * as bodyParser from "body-parser"; // pull information from HTML POST (express4)
 import * as cors from 'cors';
 
@@ -19,7 +19,7 @@ import { Configuration as RsaStoreConfiguration } from 'rsa-vault';
 DalConfiguration.Setup(apiConfig());
 RsaStoreConfiguration.Setup(apiConfig());
 
-let app: Express = express();
+const app: Express = express();
 app.use(cors({
     origin: (apiConfig()).srvURLs,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -38,6 +38,6 @@ mapTeamRoutes(app);
 
 app.set('port', 3002);
 
-var server = app.listen(app.get('port'), apiConfig().expressListeningIPAddress, function () {
+const server = app.listen(app.get('port'), apiConfig().expressListeningIPAddress, function () {
     debug('Express server listening on port ' + server.address().port);
 });

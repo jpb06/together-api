@@ -1,4 +1,4 @@
-﻿import { Express, Request, Response } from "express-serve-static-core";
+﻿import { Express } from "express-serve-static-core";
 import { UsersStore } from "../../dal/manipulation/stores/specific/users.store";
 
 export function mapDefaultRoutes(app: Express) {

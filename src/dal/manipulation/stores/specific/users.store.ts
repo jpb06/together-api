@@ -1,5 +1,5 @@
 ﻿import { GenericStore } from '../dal.generic.store';
-import { User, TerseUser } from '../../../types/persisted.types';
+import { User } from '../../../types/persisted.types';
 import * as Crypto from './../../../../business/util/crypto.util';
 import { TeamsStore } from './teams.store';
 import { ObjectId } from 'bson';
@@ -34,7 +34,7 @@ export abstract class UsersStore {
             }
         );
 
-        return <User | undefined>user;
+        return user as User | undefined;
     }
 
     public static async addToTeam(
@@ -42,7 +42,7 @@ export abstract class UsersStore {
         teamId: ObjectId
     ): Promise<boolean> {
 
-        let user = await CacheService.GetUserByEmail(email);
+        const user = await CacheService.GetUserByEmail(email);
         if (user && user.teams.filter(el => el._id.equals(teamId)).length === 0) {
             const team = await TeamsStore.get(teamId);
             if (team) {

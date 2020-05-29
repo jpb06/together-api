@@ -1,9 +1,9 @@
 ﻿export interface DalConfig {
-    srvIPAddress: string,
-    mongodbPort: number,
-    mainDb: string,
-    mainDbUsername: string,
-    mainDbPassword: string
+    srvIPAddress: string;
+    mongodbPort: number;
+    mainDb: string;
+    mainDbUsername: string;
+    mainDbPassword: string;
 }
 
 export abstract class DalConfiguration {
